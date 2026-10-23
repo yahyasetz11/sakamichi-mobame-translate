@@ -1,3 +1,11 @@
+# [v1.1.0](https://github.com/zeem12/sakamichi-mobame-translate/releases/tag/v1.1.0) (2026-10-23)
+
+### Features
+
+- **Indonesian Casual tone preset.** Added a dedicated `Indonesian Casual` preset tone tailored for idol message translation into Indonesian (informal "aku/kamu", natural conversational particles, avoiding awkward stiff forms or unnecessary Jaksel slang, and including few-shot examples).
+- **Member name and nickname protection.** Built-in rosters for Sakurazaka46, Nogizaka46, and Hinatazaka46 protect member names, nicknames, and callsigns from being mistranslated into literal dictionary words.
+- **Active sender detection and self-reference rule.** Detects the active member chat in Flutter semantics and instructs the translation model to translate third-person self-references (e.g. member referring to herself by name) as natural first-person pronouns ("I", "me", "aku").
+
 # [v1.0.1](https://github.com/zeem12/sakamichi-mobame-translate/releases/tag/v1.0.1) (2026-10-24)
 
 ## Features

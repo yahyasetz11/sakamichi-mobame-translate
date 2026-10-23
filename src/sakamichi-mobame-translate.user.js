@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Sakamichi Mobame Translate
 // @namespace      https://github.com/zeem12/sakamichi-mobame-translate
-// @version        1.0.1
+// @version        1.1.0
 // @description    Per-bubble translation overlay and voice message transcription for the Sakurazaka46, Nogizaka46, and Hinatazaka46 Message Flutter web apps.
 // @author         Zeem12
 // @match          https://message.sakurazaka46.com/*
