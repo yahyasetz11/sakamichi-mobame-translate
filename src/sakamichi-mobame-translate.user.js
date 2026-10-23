@@ -5090,6 +5090,21 @@ function sk46AudioVisibleNow() {
             }
         }
 
+        const sender = sk46CurrentChatMember();
+        if (sender) {
+            parts.push(`Current message sender: ${sender} (${SK46_GROUP.label} member)`);
+            parts.push(`Self-reference rule: The sender frequently refers to herself in the third person using her own name or nickname (e.g. "${sender}は..."). In ${targetLanguage}, translate such self-references using first-person pronouns ("I", "me", "aku", etc.) rather than third-person.`);
+        }
+
+        const groupRoster = SK46_GROUP_MEMBERS && SK46_GROUP && SK46_GROUP_MEMBERS[SK46_GROUP.id];
+        if (groupRoster && groupRoster.length > 0) {
+            parts.push('');
+            parts.push(`MEMBER NAMES & NICKNAMES RULE:`);
+            parts.push(`- Names and nicknames of ${SK46_GROUP.label} members are personal proper nouns. NEVER translate them as literal dictionary words (e.g. 天/Ten as sky/heaven, まつり/Matsuri as festival, ひかり/Hikari as light, おすし/Osushi as sushi).`);
+            parts.push(`- Keep them in recognized Romaji or standard nicknames.`);
+            parts.push(`- Reference roster for ${SK46_GROUP.label}: ${groupRoster.join(', ')}.`);
+        }
+
         const joinedSources = sources.join('\n');
         const hasPlaceholder = !suppressNickname && joinedSources.includes('%%%');
 
