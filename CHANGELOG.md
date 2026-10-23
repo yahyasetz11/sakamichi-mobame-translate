@@ -1,6 +1,6 @@
 # [v1.1.0](https://github.com/zeem12/sakamichi-mobame-translate/releases/tag/v1.1.0) (2026-10-23)
 
-### Features
+## Features
 
 - **Indonesian Casual tone preset.** Added a dedicated `Indonesian Casual` preset tone tailored for idol message translation into Indonesian (informal "aku/kamu", natural conversational particles, avoiding awkward stiff forms or unnecessary Jaksel slang, and including few-shot examples).
 - **Member name and nickname protection.** Built-in rosters for Sakurazaka46, Nogizaka46, and Hinatazaka46 protect member names, nicknames, and callsigns from being mistranslated into literal dictionary words.
