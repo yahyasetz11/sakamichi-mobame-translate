@@ -858,9 +858,7 @@ function sk46ForwardWheelToFlutter(e) {
     const SK46_FLUTTER_HOST = 'flt-semantics-host';
     function sk46CurrentChatMember() {
         try {
-            const host = document.querySelector(SK46_FLUTTER_HOST);
-            if (!host) return '';
-            const h2 = host.querySelector('h2');
+            const h2 = document.querySelector(`${SK46_FLUTTER_HOST} h2`);
             if (!h2) return '';
             const text = (h2.textContent || '').trim();
             if (text && text.length < 50) return text;
