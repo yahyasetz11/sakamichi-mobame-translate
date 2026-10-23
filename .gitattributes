@@ -1,0 +1,17 @@
+# Normalisasi line ending — PENTING untuk userscript.
+#
+# Tanpa ini, file yang diunduh bisa berisi CRLF dan userscript manager
+# akan menolaknya. GreasyFork juga menolak upload dengan CRLF.
+* text=auto eol=lf
+
+*.js   text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.txt  text eol=lf
+
+# Tidak boleh ada transformasi line ending pada aset binary.
+*.png  binary
+*.jpg  binary
+*.gif  binary
+*.webp binary
+*.wasm binary

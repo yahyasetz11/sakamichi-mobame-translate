@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/sakamichi-mobame-translate.user.js'
+      - 'CHANGELOG.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version and changelog
+        id: meta
+        run: |
+          VERSION=$(sed -n 's|^// @version[[:space:]]*||p' \
+            src/sakamichi-mobame-translate.user.js | head -n1 | tr -d '[:space:]')
+
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid @version: $VERSION" >&2
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+          awk -v tag="v$VERSION" '
+            index($0, "# [" tag "]") == 1 { found=1; next }
+            found && /^# / { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+
+          test -s release-notes.md
+
+          printf '\n---\n\n**Full changelog:** [View the full changelog](https://github.com/%s/blob/v%s/CHANGELOG.md)\n' \
+            "$GITHUB_REPOSITORY" "$VERSION" >> release-notes.md
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.meta.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --notes-file release-notes.md
+            gh release upload "$TAG" \
+              src/sakamichi-mobame-translate.user.js --clobber
+          else
+            gh release create "$TAG" \
+              src/sakamichi-mobame-translate.user.js \
+              --title "$TAG" \
+              --notes-file release-notes.md \
+              --target "$GITHUB_SHA"
+          fi
