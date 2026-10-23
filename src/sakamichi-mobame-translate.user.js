@@ -331,7 +331,7 @@ presetTone: 'Neutral',
         { id: 'anthropic', label: 'Anthropic (Claude)', keyUrl: 'https://console.anthropic.com/settings/keys', keyPlaceholder: 'sk-ant-…' },
     ];
 
-    const SK46_TONES = ['Neutral', 'Formal', 'Casual', 'Polite'];
+    const SK46_TONES = ['Neutral', 'Formal', 'Casual', 'Polite', 'Indonesian Casual'];
     const SK46_TONE_DEFAULT = 'Neutral';
 
     const sk46DebugSeam = {
@@ -5084,6 +5084,23 @@ function sk46AudioVisibleNow() {
                 'Formal': 'Use formal, respectful language appropriate for a public message, polite but not cold.',
                 'Casual': 'Use casual, friendly, everyday language, as if the member were speaking to a close friend. Contractions and colloquialisms are welcome.',
                 'Polite': 'Use polite, courteous language, respectful and considerate but not distant.',
+                'Indonesian Casual': [
+                    'Target: Bahasa Indonesia informal yang natural — santai, hangat, dan akrab, khas pesan member idol ke fans (bukan kaku, dan bukan slang berlebihan).',
+                    'Aturan gaya bahasa:',
+                    '1. Pronoun: WAJIB pakai "aku/kamu". JANGAN PERNAH pakai "Anda", "saya" (kecuali pengumuman resmi), dan JANGAN pakai "gue/lo".',
+                    '2. Partikel percakapan: Boleh dan dianjurkan secukupnya: sih, dong, kan, loh, deh, nih, ya.',
+                    '3. DILARANG slang Jaksel atau campuran bahasa Inggris yang tidak perlu ("literally", "which is", "you know").',
+                    '4. Kalimat sopan/keigo member ke fans tetap diterjemahkan informal-ramah, bukan formal kaku.',
+                    '5. Reaksi spontan diterjemahkan hidup: えっ→"Eh!?", マジで→"Serius?!", うそ→"Bohong!/Masa sih?!", やばい→"Gawat/Gila sih" (sesuai konteks).',
+                    '6. Angka dan satuan ditulis biasa (10 Juni, 30 besar, 15 menit).',
+                    'Contoh gaya (tirukan nada ini):',
+                    'JP: えー、マジで！？それ初めて聞いたんだけど！ -> ID: Hah, serius!? Aku baru denger itu loh!',
+                    'JP: ちょっと待って、それはずるくない？ -> ID: Eh bentar, itu curang dong?',
+                    'JP: いやいやいや、絶対違うって！ -> ID: Nggak nggak nggak, jelas bukan gitu!',
+                    'JP: なんか、最近メンバーとご飯行く機会が増えて、嬉しいなって思います。 -> ID: Akhir-akhir ini makin sering makan bareng member, dan itu bikin aku seneng banget sih.',
+                    'JP: それな！うちもずっとそう思ってた！ -> ID: Nah itu! Aku juga dari dulu mikir gitu!',
+                    'JP: お疲れ様でした〜！ -> ID: Kerja bagus hari ini~!'
+                ].join('\n'),
             };
             if (toneGuides[tone]) {
                 parts.push(`Tone guidance (subordinate to naturalness, so prioritise naturalness if applying it would produce awkward output): ${toneGuides[tone]}`);
