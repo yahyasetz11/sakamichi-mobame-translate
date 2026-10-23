@@ -1,6 +1,6 @@
 # Indonesian Casual Tone & Member Context Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Add `'Indonesian Casual'` tone preset and dynamic member name context/protection to `src/sakamichi-mobame-translate.user.js`.
 
@@ -19,7 +19,7 @@
 - Modify: `src/sakamichi-mobame-translate.user.js`
 - Test: `tests/test_member_context.js`
 
-- [ ] **Step 1: Write test for member roster data and sender detection**
+- [x] **Step 1: Write test for member roster data and sender detection**
 
 Create `tests/test_member_context.js`:
 ```javascript
@@ -45,12 +45,12 @@ assert(src.includes('function sk46CurrentChatMember('), 'sk46CurrentChatMember m
 console.log('Task 1 tests passed.');
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node tests/test_member_context.js`  
 Expected: FAIL with assertion error (`SK46_GROUP_MEMBERS must be defined`).
 
-- [ ] **Step 3: Implement `SK46_GROUP_MEMBERS` and `sk46CurrentChatMember`**
+- [x] **Step 3: Implement `SK46_GROUP_MEMBERS` and `sk46CurrentChatMember`**
 
 In `src/sakamichi-mobame-translate.user.js`, define `SK46_GROUP_MEMBERS` near `SK46_GROUPS` (around line 60):
 ```javascript
@@ -133,17 +133,17 @@ And implement `sk46CurrentChatMember()`:
     }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node tests/test_member_context.js`  
 Expected: PASS with "Task 1 tests passed."
 
-- [ ] **Step 5: Verify syntax**
+- [x] **Step 5: Verify syntax**
 
 Run: `node --check src/sakamichi-mobame-translate.user.js`  
 Expected: Clean exit (no syntax errors).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/sakamichi-mobame-translate.user.js tests/test_member_context.js
@@ -158,7 +158,7 @@ git commit -m "feat: add group member rosters and current chat member detection"
 - Modify: `src/sakamichi-mobame-translate.user.js`
 - Test: `tests/test_prompt_context.js`
 
-- [ ] **Step 1: Write test for prompt injection**
+- [x] **Step 1: Write test for prompt injection**
 
 Create `tests/test_prompt_context.js`:
 ```javascript
@@ -175,12 +175,12 @@ assert(src.includes('SK46_GROUP_MEMBERS[SK46_GROUP.id]'), 'Prompt must reference
 console.log('Task 2 tests passed.');
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node tests/test_prompt_context.js`  
 Expected: FAIL with assertion error.
 
-- [ ] **Step 3: Integrate member context into `sk46BuildStylePromptParts`**
+- [x] **Step 3: Integrate member context into `sk46BuildStylePromptParts`**
 
 In `src/sakamichi-mobame-translate.user.js`, inside `sk46BuildStylePromptParts`:
 ```javascript
@@ -200,17 +200,17 @@ In `src/sakamichi-mobame-translate.user.js`, inside `sk46BuildStylePromptParts`:
         }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node tests/test_prompt_context.js`  
 Expected: PASS with "Task 2 tests passed."
 
-- [ ] **Step 5: Verify syntax**
+- [x] **Step 5: Verify syntax**
 
 Run: `node --check src/sakamichi-mobame-translate.user.js`  
 Expected: Clean exit.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/sakamichi-mobame-translate.user.js tests/test_prompt_context.js
@@ -225,7 +225,7 @@ git commit -m "feat: inject member context and name protection into translation 
 - Modify: `src/sakamichi-mobame-translate.user.js`
 - Test: `tests/test_indonesian_casual.js`
 
-- [ ] **Step 1: Write test for 'Indonesian Casual' tone**
+- [x] **Step 1: Write test for 'Indonesian Casual' tone**
 
 Create `tests/test_indonesian_casual.js`:
 ```javascript
@@ -250,12 +250,12 @@ assert(src.includes('Hah, serius!? Aku baru denger itu loh!'), 'Few-shot Indones
 console.log('Task 3 tests passed.');
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node tests/test_indonesian_casual.js`  
 Expected: FAIL with assertion error.
 
-- [ ] **Step 3: Implement 'Indonesian Casual' in `SK46_TONES` and `toneGuides`**
+- [x] **Step 3: Implement 'Indonesian Casual' in `SK46_TONES` and `toneGuides`**
 
 In `src/sakamichi-mobame-translate.user.js`:
 1. Update `SK46_TONES`:
@@ -285,17 +285,17 @@ Add `'Indonesian Casual'` to `toneGuides`:
                 ].join('\n')
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node tests/test_indonesian_casual.js`  
 Expected: PASS with "Task 3 tests passed."
 
-- [ ] **Step 5: Verify syntax**
+- [x] **Step 5: Verify syntax**
 
 Run: `node --check src/sakamichi-mobame-translate.user.js`  
 Expected: Clean exit.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/sakamichi-mobame-translate.user.js tests/test_indonesian_casual.js
@@ -310,7 +310,7 @@ git commit -m "feat: add Indonesian Casual tone preset and style guide"
 - Modify: `src/sakamichi-mobame-translate.user.js`
 - Test: `tests/test_e2e_prompt.js`
 
-- [ ] **Step 1: Write integration test simulating prompt generation**
+- [x] **Step 1: Write integration test simulating prompt generation**
 
 Create `tests/test_e2e_prompt.js`:
 Run a simulated `sk46BuildStylePromptParts` call by extracting and executing the function inside Node with mock DOM/state.
@@ -318,7 +318,7 @@ Verify:
 1. When `presetTone = 'Indonesian Casual'`, the output prompt includes both the style guide and member context.
 2. Line contract and placeholders remain unaffected.
 
-- [ ] **Step 2: Run all tests**
+- [x] **Step 2: Run all tests**
 
 Run:
 ```bash
@@ -330,11 +330,11 @@ node --check src/sakamichi-mobame-translate.user.js
 ```
 Expected: All tests PASS.
 
-- [ ] **Step 3: Bump version in Userscript header**
+- [x] **Step 3: Bump version in Userscript header**
 
 Update `@version` from `1.0.0` to `1.1.0` in `src/sakamichi-mobame-translate.user.js`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/sakamichi-mobame-translate.user.js tests/
