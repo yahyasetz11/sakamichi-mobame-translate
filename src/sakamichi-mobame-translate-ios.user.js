@@ -714,6 +714,35 @@ presetTone: 'Neutral',
             animation: sk46-refresh-spin 0.9s linear infinite;
         }
         .sk46-transcript-btn { color: var(--sk46-sender-color, #888); }
+        .sk46-fab-fallback {
+            position: fixed !important;
+            display: flex !important;
+            right: 16px !important;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+            width: 44px !important;
+            height: 44px !important;
+            border-radius: 50% !important;
+            background: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22) !important;
+            z-index: 2147483450 !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: auto !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+        .sk46-fab-fallback svg {
+            width: 22px !important;
+            height: 22px !important;
+        }
+        @media (max-width: 600px) {
+            #sheet {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 16px 16px 0 0 !important;
+                max-height: calc(100dvh - 30px) !important;
+                padding-bottom: env(safe-area-inset-bottom, 16px) !important;
+            }
+        }
     `;
 
     const sk46PopupHost = document.createElement('div');
@@ -6503,21 +6532,31 @@ function sk46AudioVisibleNow() {
         if (!sk46TranslateBtnAllowedHere()) { sk46TranslateBtn.style.display = 'none'; return; }
 
         const onHub = sk46IsTalkHubPage();
-        
-        if (!onHub && !sk46GetHeaderRowBounds()) { sk46TranslateBtn.style.display = 'none'; return; }
-
         const rightBtns = sk46FindHeaderRightButtons();
-        if (rightBtns.length === 0) { sk46TranslateBtn.style.display = 'none'; return; }
 
-        const envelopeRect = rightBtns[0];
-        const btnSize = envelopeRect.height;
-        
-        if (!(btnSize > 0)) { sk46TranslateBtn.style.display = 'none'; return; }
+        if ((onHub || sk46GetHeaderRowBounds()) && rightBtns.length > 0) {
+            const envelopeRect = rightBtns[0];
+            const btnSize = envelopeRect.height;
+            if (btnSize > 0) {
+                sk46TranslateBtn.classList.remove('sk46-fab-fallback');
+                sk46TranslateBtn.style.display = 'flex';
+                sk46TranslateBtn.style.left = (envelopeRect.left - btnSize) + 'px';
+                sk46TranslateBtn.style.top = envelopeRect.top + 'px';
+                sk46TranslateBtn.style.width = btnSize + 'px';
+                sk46TranslateBtn.style.height = btnSize + 'px';
+                sk46TranslateBtn.style.right = '';
+                sk46TranslateBtn.style.bottom = '';
+                return;
+            }
+        }
+
+        // FAB fallback: header not found or too narrow, float at bottom-right
+        sk46TranslateBtn.classList.add('sk46-fab-fallback');
         sk46TranslateBtn.style.display = 'flex';
-        sk46TranslateBtn.style.left = (envelopeRect.left - btnSize) + 'px';
-        sk46TranslateBtn.style.top = envelopeRect.top + 'px';
-        sk46TranslateBtn.style.width = btnSize + 'px';
-        sk46TranslateBtn.style.height = btnSize + 'px';
+        sk46TranslateBtn.style.left = '';
+        sk46TranslateBtn.style.top = '';
+        sk46TranslateBtn.style.width = '';
+        sk46TranslateBtn.style.height = '';
     }
 
     function sk46PositionSheet() {
