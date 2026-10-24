@@ -1,3 +1,17 @@
+# [v1.0.1](https://github.com/zeem12/sakamichi-mobame-translate/releases/tag/v1.0.1) (2026-10-24)
+
+## Features
+
+- **Refresh error indication.** Failed translations now show an error state through the refresh button and tooltip. The button turns red and shows a short summary derived from the provider error in a compact tooltip; it returns to normal after a successful retry.
+
+## Bug Fixes
+
+### Providers and models
+
+- **Call info button pointed to the wrong provider.** It now opens the provider that actually handles transcription instead of always using the Talk provider (Gemini by default).
+- **Voice model lists were hardcoded, and filtering/sorting was weak.** Chat and voice model lists are now fetched from each provider's live catalog with better filtering and sorting; voice lists are no longer hardcoded and prioritize word-timing support. Gemini 3.6+ no longer receives the deprecated temperature parameter, and OpenAI transcription requests use `json` for models that do not support `verbose_json`.
+- **Outdated Gemini models and limits.** Removed the obsolete hardcoded Gemini 2.5-era transcription list and updated the Gemini rate limits to the current AI Studio free-tier values (Flash 5 RPM / 20 RPD, Flash-Lite 15/500, Transcribe 3/25, Gemma 4 30/14.4K). Models without a free-tier allowance (Gemini 2.0 Flash, Gemini 2.5 Pro, Gemini 3.1 Pro, and Gemini 4 Argon) are still listed. They use conservative RPM/TPM pacing without a daily cap, so paid keys are not held to free-tier RPD and free keys surface the provider quota error instead of being blocked locally.
+
 # [v1.0.0](https://github.com/zeem12/sakamichi-mobame-translate/releases/tag/v1.0.0) (2026-10-23)
 
 First public release.
