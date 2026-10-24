@@ -13,6 +13,16 @@
 // @grant          GM_setValue
 // @grant          GM_xmlhttpRequest
 // @grant          GM_info
+// @connect        generativelanguage.googleapis.com
+// @connect        api.groq.com
+// @connect        api.cerebras.ai
+// @connect        openrouter.ai
+// @connect        api.deepseek.com
+// @connect        api.openai.com
+// @connect        api.anthropic.com
+// @connect        dmu54xlwnhgck.cloudfront.net
+// @connect        djznowbmqickg.cloudfront.net
+// @connect        d3ux740zhdvrpf.cloudfront.net
 // @run-at         document-start
 // @license        MIT
 // @homepageURL    https://github.com/zeem12/sakamichi-mobame-translate
@@ -24,13 +34,13 @@
 (function () {
     'use strict';
 
+    if (window.top !== window.self) return;
+
     const pageWin = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
     try {
         pageWin.flutterConfiguration = pageWin.flutterConfiguration || {};
         pageWin.flutterConfiguration.enableSemantics = true;
     } catch (e) {}
-
-    if (window.top !== window.self) return;
 
     const SK46_GROUPS = Object.freeze({
         'message.sakurazaka46.com': Object.freeze({
