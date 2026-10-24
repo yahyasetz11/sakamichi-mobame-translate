@@ -1069,7 +1069,7 @@ function sk46ForwardWheelToFlutter(e) {
     let sk46BottomBoundarySource = 'init';
     let sk46CachedScrollContainerEl = null;
 
-    const SK46_VIEWPORT_FILL_RATIO = 0.98;
+    const SK46_VIEWPORT_FILL_RATIO = 1.05;
     
     function sk46AcceptScrollContainer(el) {
         if (!el || !el.isConnected) return null;
@@ -1078,7 +1078,8 @@ function sk46ForwardWheelToFlutter(e) {
         if (!r) return null;
         if (r.width <= 0 || r.height <= 0) return null;
         if (r.height < 120) return null;
-        if (r.width >= window.innerWidth * SK46_VIEWPORT_FILL_RATIO && r.height >= window.innerHeight * SK46_VIEWPORT_FILL_RATIO) return null;
+        // Mobile: accept full-width elements; SK46_VIEWPORT_FILL_RATIO is 1.05 so this rarely fires
+        if (r.width > window.innerWidth * SK46_VIEWPORT_FILL_RATIO) return null;
         return r;
     }
 
@@ -6460,8 +6461,9 @@ function sk46AudioVisibleNow() {
             const tag = child.tagName.toLowerCase();
             if (tag !== 'flt-semantics' && tag !== 'flt-semantics-container') continue;
             const r = child.getBoundingClientRect();
-            if (r.width < 200) continue;
-            if (r.width >= iw * SK46_VIEWPORT_FILL_RATIO) continue;
+            if (r.width < 150) continue;
+            // Mobile: allow full-width containers (ratio 1.05)
+            if (r.width > iw * SK46_VIEWPORT_FILL_RATIO) continue;
             if (r.height < ih * 0.3) continue;
             const area = r.width * r.height;
             if (area > bestArea) { best = r; bestArea = area; }
@@ -6475,7 +6477,7 @@ function sk46AudioVisibleNow() {
             let p = h2.parentElement;
             while (p && p !== host && p !== document.body) {
                 const pr = p.getBoundingClientRect();
-                if (pr.width >= 200 && pr.width < iw * SK46_VIEWPORT_FILL_RATIO && pr.height > ih * 0.3) {
+                if (pr.width >= 150 && pr.width <= iw * SK46_VIEWPORT_FILL_RATIO && pr.height > ih * 0.3) {
                     const area = pr.width * pr.height;
                     if (area > bestArea) { best = pr; bestArea = area; }
                 }
@@ -6486,9 +6488,10 @@ function sk46AudioVisibleNow() {
         const fv = document.querySelector('flutter-view');
         if (fv) {
             const r = fv.getBoundingClientRect();
-            if (r.width > 0 && r.width < iw * SK46_VIEWPORT_FILL_RATIO && r.height > 0) return r;
+            if (r.width > 0 && r.height > 0) return r;
         }
-        return null;
+        // Final fallback: return full viewport rect for mobile
+        return { left: 0, top: 0, right: iw, bottom: ih, width: iw, height: ih };
     }
 
     function sk46TranslateBtnAllowedHere() {
