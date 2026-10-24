@@ -1,5 +1,3 @@
-<center>
-
 # Sakamichi Mobame Translate
 
 An independent, unofficial, non-commercial userscript that adds per-bubble
@@ -7,33 +5,26 @@ translation overlays and voice message transcription to the **櫻坂46メッセ�
 **乃木坂46メッセージ**, and **日向坂46メッセージ** web apps. It runs in your
 browser, has no server of its own, and uses your own AI provider API key.
 
-[![Userscript](https://img.shields.io/badge/userscript-Tampermonkey_%7C_Violentmonkey-2f855a?style=flat-square)](#installation)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](https://github.com/zeem12/sakamichi-mobame-translate/blob/main/LICENSE)
-[![Unofficial](https://img.shields.io/badge/unofficial-fan%20project-lightgrey?style=flat-square)](#disclaimer)
+**Unofficial fan project — use at your own risk.** Not affiliated with,
+authorized by, endorsed by, sponsored by, or officially connected to 櫻坂46,
+乃木坂46, 日向坂46, Sony Music Solutions Inc., their management companies, or
+any of their affiliates. This is an independent, personal, non-commercial
+project. You are responsible for your own use of the script and for complying
+with each app's terms. Read the full notices before installing.
 
-[About](#about) · [Features](#features) · [Supported apps](#supported-apps) · [Requirements](#requirements) · [Installation](#installation) · [Getting started](#getting-started) · [Privacy](#privacy) · [Disclaimer](#disclaimer)
+**License:** MIT — [source code](https://github.com/zeem12/sakamichi-mobame-translate/blob/main/LICENSE)
 
-</center>
+**Repository:** [github.com/zeem12/sakamichi-mobame-translate](https://github.com/zeem12/sakamichi-mobame-translate)
 
-> **Unofficial fan project — use at your own risk.**
-> Not affiliated with, authorized by, endorsed by, sponsored by, or officially
-> connected to 櫻坂46, 乃木坂46, 日向坂46, Sony Music Solutions Inc., their
-> management companies, or any of their affiliates. This is an independent,
-> personal, non-commercial project. You are responsible for your own use of the
-> script and for complying with each app's terms.
-> Read the [full notices](#disclaimer) before installing.
+## Demo
 
 <center>
-
 <img src="https://raw.githubusercontent.com/zeem12/sakamichi-mobame-translate/main/media/demo_1.gif" width="260" alt="Demo 1">
 <img src="https://raw.githubusercontent.com/zeem12/sakamichi-mobame-translate/main/media/demo_2.gif" width="260" alt="Demo 2">
 <img src="https://raw.githubusercontent.com/zeem12/sakamichi-mobame-translate/main/media/demo_3.gif" width="260" alt="Demo 3">
-
-*Example only: a mockup, not real paid content.*
-
 </center>
 
-<a name="about"></a>
+*Example only: a mockup, not real paid content.*
 
 ## About
 
@@ -61,8 +52,6 @@ shown directly over each message.
 Data handling is described in [Privacy](#privacy), and the full notices are in
 the [Disclaimer](#disclaimer).
 
-<a name="features"></a>
-
 ## Features
 
 - **Text translation**: an overlay positioned directly over each message
@@ -80,37 +69,33 @@ the [Disclaimer](#disclaimer).
   Per-provider rate limiting with automatic backoff helps you stay within your
   provider's limits.
 
-<a name="supported-apps"></a>
-
 ## Supported apps
 
-| App | Official name | Web address | Official terms |
-|---|---|---|---|
-| Nogizaka46 | 乃木坂46メッセージ | `https://message.nogizaka46.com/` | [Terms of Service](https://contact.nogizaka46.com/s/n46app/page/app_terms) |
-| Sakurazaka46 | 櫻坂46メッセージ | `https://message.sakurazaka46.com/` | [Terms of Service](https://sakurazaka46.com/s/s46app/page/app_terms) |
-| Hinatazaka46 | 日向坂46メッセージ | `https://message.hinatazaka46.com/` | [Terms of Service](https://www.hinatazaka46.com/s/h46app/page/app_terms) |
+| App | Official name | Web address |
+| --- | --- | --- |
+| Nogizaka46 | 乃木坂46メッセージ | `https://message.nogizaka46.com/` |
+| Sakurazaka46 | 櫻坂46メッセージ | `https://message.sakurazaka46.com/` |
+| Hinatazaka46 | 日向坂46メッセージ | `https://message.hinatazaka46.com/` |
 
 The script identifies the app from the hostname and stays inactive on every
 other site.
-
-<a name="requirements"></a>
 
 ## Requirements
 
 - An active account with a subscription to at least one supported app.
 - A desktop browser (Chrome, Edge, Firefox, or Opera) with a userscript
-  manager — set up in step 1 of [Installation](#installation).
+  manager — set up in step 1 of Installation.
 - An API key for text translation, from any of the providers below:
 
-  | Provider | Get a key |
-  |---|---|
-  | Gemini (Google) | https://aistudio.google.com/app/apikey |
-  | Groq | https://console.groq.com/keys |
-  | Cerebras | https://cloud.cerebras.ai/ |
-  | OpenRouter | https://openrouter.ai/keys |
-  | DeepSeek | https://platform.deepseek.com/api_keys |
-  | OpenAI | https://platform.openai.com/api-keys |
-  | Anthropic (Claude) | https://console.anthropic.com/settings/keys |
+| Provider | Get a key |
+| --- | --- |
+| Gemini (Google) | https://aistudio.google.com/app/apikey |
+| Groq | https://console.groq.io/keys |
+| Cerebras | https://cloud.cerebras.ai/ |
+| OpenRouter | https://openrouter.ai/keys |
+| DeepSeek | https://platform.deepseek.com/api_keys |
+| OpenAI | https://platform.openai.com/api-keys |
+| Anthropic (Claude) | https://console.anthropic.com/settings/keys |
 
 - Voice transcription is available with **Gemini, Groq, or OpenAI**.
 - Free tiers are available: **Gemini, Groq, and OpenRouter** all issue keys
@@ -119,33 +104,26 @@ other site.
   carry their own data terms (see the [Disclaimer](#disclaimer)).
 - Usage is billed by your provider, not by this project.
 
-<a name="installation"></a>
-
 ## Installation
 
 1. Install a userscript manager — a small extension that runs user scripts on
    the pages you choose:
 
-   | Browser | Userscript manager |
-   |---|---|
-   | Chrome | [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) or [Violentmonkey](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag) |
-   | Edge | [Tampermonkey](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd) |
-   | Firefox | [Tampermonkey](https://addons.mozilla.org/firefox/addon/tampermonkey/) or [Violentmonkey](https://addons.mozilla.org/firefox/addon/violentmonkey/) |
-   | Opera | [Tampermonkey](https://addons.opera.com/extensions/details/tampermonkey-beta/) or [Violentmonkey](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag) |
+| Browser | Userscript manager |
+| --- | --- |
+| Chrome | [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) or [Violentmonkey](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag) |
+| Edge | [Tampermonkey](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd) |
+| Firefox | [Tampermonkey](https://addons.mozilla.org/firefox/addon/tampermonkey/) or [Violentmonkey](https://addons.mozilla.org/firefox/addon/violentmonkey/) |
+| Opera | [Tampermonkey](https://addons.opera.com/extensions/details/tampermonkey-beta/) or [Violentmonkey](https://chrome.google.com/webstore/detail/violent-monkey/jinjaccalgkegednnccohejagnlnfdag) |
 
 2. Install the script:
 
-   [![Install from Greasy Fork](https://img.shields.io/badge/install-Greasy_Fork-670000?style=for-the-badge)](https://greasyfork.org/en/scripts/601914-sakamichi-mobame-translate)
-   [![Download from GitHub Releases](https://img.shields.io/badge/download-GitHub_Releases-24292f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/zeem12/sakamichi-mobame-translate/releases/latest)
-
-   - **Greasy Fork** — open the
-     [script page](https://greasyfork.org/en/scripts/601914-sakamichi-mobame-translate)
-     and click **Install**.
-   - **GitHub Releases** — open `sakamichi-mobame-translate.user.js` from the
-     [latest release](https://github.com/zeem12/sakamichi-mobame-translate/releases/latest);
-     your userscript manager shows an install page, where you click **Install**.
-
-<a name="getting-started"></a>
+- **Greasy Fork** — open the
+  [script page](https://greasyfork.org/en/scripts/601914-sakamichi-mobame-translate)
+  and click **Install**.
+- **GitHub Releases** — open `sakamichi-mobame-translate.user.js` from the
+  [latest release](https://github.com/zeem12/sakamichi-mobame-translate/releases/latest);
+  your userscript manager shows an install page, where you click **Install**.
 
 ## Getting started
 
@@ -155,8 +133,6 @@ other site.
    choose a provider, paste your API key, pick a model, and use the connection
    test.
 4. Turn on the **Translate** switch.
-
-<a name="privacy"></a>
 
 ## Privacy
 
@@ -176,8 +152,6 @@ Audio bytes are never written to storage.
 
 Read the [full Privacy section](https://github.com/zeem12/sakamichi-mobame-translate#privacy)
 for the complete data table and deletion controls.
-
-<a name="disclaimer"></a>
 
 ## Disclaimer
 
@@ -212,8 +186,6 @@ use, the script.
 Read the [full Disclaimer](https://github.com/zeem12/sakamichi-mobame-translate#disclaimer)
 for the complete notices, including trademarks, availability, and acceptance.
 
-<a name="license"></a>
-
 ## License
 
 The script's source code in this repository is released under the
@@ -228,8 +200,8 @@ those remain with their respective owners.
 This project is free and non-commercial. If you would like to support the
 author's open-source work in general:
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-ff5e5b?style=flat-square&logo=ko-fi&logoColor=white)](https://ko-fi.com/zeem12)
-[![Trakteer](https://img.shields.io/badge/Trakteer-Support-be1e2d?style=flat-square)](https://trakteer.id/zeem12/tip)
+<a href="https://ko-fi.com/zeem12"><img src="https://img.shields.io/badge/Ko--fi-Support-ff5e5b?style=flat-square&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
+<a href="https://trakteer.id/zeem12/tip"><img src="https://img.shields.io/badge/Trakteer-Support-be1e2d?style=flat-square" alt="Trakteer"></a>
 
 Bug reports and feature requests are welcome on the
 [issue tracker](https://github.com/zeem12/sakamichi-mobame-translate/issues).
