@@ -1079,7 +1079,7 @@ function sk46ForwardWheelToFlutter(e) {
         if (r.width <= 0 || r.height <= 0) return null;
         if (r.height < 120) return null;
         // Mobile: accept full-width elements; SK46_VIEWPORT_FILL_RATIO is 1.05 so this rarely fires
-        if (r.width > window.innerWidth * SK46_VIEWPORT_FILL_RATIO) return null;
+        if (r.width > window.innerWidth * SK46_VIEWPORT_FILL_RATIO && r.height > window.innerHeight * SK46_VIEWPORT_FILL_RATIO) return null;
         return r;
     }
 
@@ -6477,7 +6477,7 @@ function sk46AudioVisibleNow() {
             let p = h2.parentElement;
             while (p && p !== host && p !== document.body) {
                 const pr = p.getBoundingClientRect();
-                if (pr.width >= 150 && pr.width <= iw * SK46_VIEWPORT_FILL_RATIO && pr.height > ih * 0.3) {
+                if (pr.width >= 150 && pr.width < iw * SK46_VIEWPORT_FILL_RATIO && pr.height > ih * 0.3) {
                     const area = pr.width * pr.height;
                     if (area > bestArea) { best = pr; bestArea = area; }
                 }
