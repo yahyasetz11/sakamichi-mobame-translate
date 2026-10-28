@@ -62,7 +62,140 @@
       accent: "#75BCE1",
     }),
   });
-
+  const SK46_GROUP_MEMBERS = Object.freeze({
+    sakura: [
+      // 1st Gen
+      "小池美波 (Koike Minami)",
+      // 2nd Gen
+      "井上梨名 (Inoue Rina / Inori)",
+      "遠藤光莉 (Endo Hikari / Hikari)",
+      "大園玲 (Ozono Rei / Rei, Zono)",
+      "大沼晶保 (Onuma Akiho / Numa, Akipo)",
+      "幸阪茉里乃 (Kosaka Marino / Marino)",
+      "武元唯衣 (Takemoto Yui / Chuke)",
+      "田村保乃 (Tamura Hono / Honosu, Hono)",
+      "藤吉夏鈴 (Fujiyoshi Karin / Karin)",
+      "増本綺良 (Masumoto Kira / Kirako)",
+      "松田里奈 (Matsuda Rina / Matsuda, Matsuri)",
+      "森田ひかる (Morita Hikaru / Run, Run-chan, Hikaru)",
+      "守屋麗奈 (Moriya Rena / Rena, Renana)",
+      "山﨑天 (Yamazaki Ten / Tenchan, Ten)",
+      // 3rd Gen
+      "石森璃花 (Ishimori Rika / Rika)",
+      "遠藤理子 (Endo Riko / Enriko)",
+      "小田倉麗奈 (Odakura Reina / Reina)",
+      "小島凪紗 (Kojima Nagisa / Nagi)",
+      "谷口愛季 (Taniguchi Airi / Airi)",
+      "中嶋優月 (Nakashima Yuzuki / Yuzu)",
+      "的野美青 (Matono Mio / Mio)",
+      "向井純葉 (Mukai Itoha / Itoha)",
+      "村山美羽 (Murayama Miu / Miu)",
+      "村井優 (Murai Yu / Yu)",
+      "山下瞳月 (Yamashita Shizuki / Shii, Shiichan)",
+      // 4th Gen
+      "浅井恋乃未 (Asai Konomi / Konomi)",
+      "稲熊ひな (Inaguma Hina / Hina)",
+      "勝又春 (Katsumata Haru / Haru)",
+      "佐藤愛桜 (Sato Neo / Neo)",
+      "中川智尋 (Nakagawa Chihiro / Chiitan)",
+      "松本和子 (Matsumoto Wako / Wakochi)",
+      "目黒陽色 (Meguro Hiiro / Hiiro)",
+      "山川宇衣 (Yamakawa Ui / Ui)",
+      "山田桃実 (Yamada Momomi / Momo)",
+      // Notable Grads
+      "菅井友香 (Sugai Yuka)",
+      "渡邉理佐 (Watanabe Risa)",
+      "小林由依 (Kobayashi Yui)",
+      "土生瑞穂 (Habu Mizuho)",
+    ],
+    nogi: [
+      // 3rd Gen
+      "伊藤理々杏 (Ito Riria / Ririan)",
+      "岩本蓮加 (Iwamoto Renka / Rentan)",
+      "吉田綾乃クリスティー (Yoshida Ayano Christie / Ayatii)",
+      // 4th Gen
+      "遠藤さくら (Endo Sakura / Sakura, Sakuchan)",
+      "賀喜遥香 (Kaki Haruka / Kakki)",
+      "金川紗耶 (Kanagawa Saya / Yanchan)",
+      "黒見明香 (Kuromi Haruka / Kuromin)",
+      "柴田柚菜 (Shibata Yuna / Yunchan)",
+      "田村真佑 (Tamura Mayu / Mayutan)",
+      "筒井あやめ (Tsutsui Ayame / Ayamen)",
+      "林瑠奈 (Hayashi Runa / Runachan)",
+      "弓木奈於 (Yumiki Nao / Naochan)",
+      // 5th Gen
+      "五百城茉央 (Ioki Mao / Iochan)",
+      "池田瑛紗 (Ikeda Teresa / Teresa)",
+      "一ノ瀬美空 (Ichinose Miku / Kuuchan, Mikku)",
+      "井上和 (Inoue Nagi / Nagi)",
+      "岡本姫奈 (Okamoto Hina / Hiichan)",
+      "小川彩 (Ogawa Aya / Aaya)",
+      "奥田いろは (Okuda Iroha / Iroha)",
+      "川﨑桜 (Kawasaki Sakura / Sakutan)",
+      "菅原咲月 (Sugawara Satsuki / Satsukichan)",
+      "冨里奈央 (Tomisato Nao / Naonao)",
+      "中西アルノ (Nakanishi Aruno / Aruno)",
+      // 6th Gen
+      "愛宕心響 (Atago Kokone / Kokonen)",
+      "大越ひなの (Okoshi Hinano / Hinano)",
+      "小津玲奈 (Ozu Reina / Reina)",
+      "海邉朱莉 (Kaibe Akari / Akari)",
+      "川端晃菜 (Kawabata Hina / Hiitsun)",
+      "鈴木佑捺 (Suzuki Yuuna / Yuuna)",
+      "瀬戸口心月 (Setoguchi Mitsuki / Mitsuki)",
+      "長嶋凛桜 (Nagashima Rio / Riotan)",
+      "増田三莉音 (Masuda Mirine / Mirine)",
+      "森平麗心 (Morihira Urumi / Urumin)",
+      "矢田萌華 (Yada Moeka / Yadachan)",
+      // Notable Grads
+      "齋藤飛鳥 (Saito Asuka)",
+      "山下美月 (Yamashita Mizuki)",
+      "白石麻衣 (Shiraishi Mai)",
+      "西野七瀬 (Nishino Nanase)",
+      "生田絵梨花 (Ikuta Erika)",
+      "秋元真夏 (Akimoto Manatsu)",
+    ],
+    hinata: [
+      // 2nd Gen
+      "金村美玖 (Kanemura Miku / Miku, Osushi)",
+      "小坂菜緒 (Kosaka Nao / Nao, Kosakana)",
+      // 3rd Gen
+      "上村ひなの (Kamimura Hinano / Nano, Hinanon)",
+      "髙橋未来虹 (Takahashi Mikuni / Mikuni)",
+      "森本茉莉 (Morimoto Marie / Marimoto)",
+      "山口陽世 (Yamaguchi Haruyo / Paru, Paruyo)",
+      // 4th Gen
+      "石塚瑶季 (Ishizuka Tamaki / Tamachan)",
+      "小西夏菜実 (Konishi Nanami / Konishi)",
+      "清水理央 (Shimizu Rio / Riotamu)",
+      "正源司陽子 (Shogenji Yoko / Yoko, Shogenko)",
+      "竹内希来里 (Takeuchi Kirari / Kirarin)",
+      "平尾帆夏 (Hirao Honoka / Hiraho)",
+      "平岡海月 (Hiraoka Mitsuki / Micchan)",
+      "藤嶌果歩 (Fujishima Kaho / Kahorin)",
+      "宮地すみれ (Miyachi Sumire / Sumire)",
+      "山下葉留花 (Yamashita Haruka / Haruharu)",
+      "渡辺莉奈 (Watanabe Rina / Rina, Rinachan)",
+      // 5th Gen
+      "大田美月 (Ota Mizuki / Miichan)",
+      "大野愛実 (Ono Manami / Manamin)",
+      "片山紗希 (Katayama Saki / Saki)",
+      "蔵盛妃那乃 (Kuramori Hinano / Hinanon)",
+      "坂井新奈 (Sakai Nina / Niitan)",
+      "佐藤優羽 (Sato Yu / Yuuchan)",
+      "下田衣珠季 (Shimoda Izuki / Izuki)",
+      "高井俐香 (Takai Rika / Rikatan)",
+      "鶴崎仁香 (Tsurusaki Niko / Nikochan)",
+      "松尾桜 (Matsuo Sakura / Sakura)",
+      // Notable Grads
+      "齊藤京子 (Saito Kyoko)",
+      "佐々木美玲 (Sasaki Mirei)",
+      "丹生明里 (Nibu Akari)",
+      "松田好花 (Matsuda Konoka)",
+      "渡邉美穂 (Watanabe Miho)",
+      "東村芽依 (Higashimura Mei)",
+    ],
+  });
   const SK46_GROUP = SK46_GROUPS[location.hostname];
   if (!SK46_GROUP) return;
 
@@ -6376,6 +6509,20 @@ border-radius: 12px;
       parts.push(`Current message sender: ${sender} (${groupLabel} member)`);
       parts.push(
         `Self-reference rule: The sender frequently refers to herself in the third person using her own name or nickname (e.g. "${sender}は..."). In ${targetLanguage}, translate such self-references using first-person pronouns ("I", "me", "aku", etc.) rather than third-person.`,
+      );
+    }
+
+    const groupRoster =
+      SK46_GROUP_MEMBERS && SK46_GROUP && SK46_GROUP_MEMBERS[SK46_GROUP.id];
+    if (groupRoster && groupRoster.length > 0) {
+      parts.push("");
+      parts.push(`MEMBER NAMES & NICKNAMES RULE:`);
+      parts.push(
+        `- Names and nicknames of ${groupLabel} members are personal proper nouns. NEVER translate them as literal dictionary words (e.g. 天/Ten as sky/heaven, まつり/Matsuri as festival, ひかり/Hikari as light, おすし/Osushi as sushi).`,
+      );
+      parts.push(`- Keep them in recognized Romaji or standard nicknames.`);
+      parts.push(
+        `- Reference roster for ${groupLabel}: ${groupRoster.join(", ")}.`,
       );
     }
 
