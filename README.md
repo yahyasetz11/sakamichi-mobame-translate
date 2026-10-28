@@ -128,8 +128,12 @@ other site.
 
 2. Install the script:
 
+   [![Install from Greasy Fork](https://img.shields.io/badge/install-Greasy_Fork-670000?style=for-the-badge)](https://greasyfork.org/en/scripts/601914-sakamichi-mobame-translate)
    [![Download from GitHub Releases](https://img.shields.io/badge/download-GitHub_Releases-24292f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/zeem12/sakamichi-mobame-translate/releases/latest)
 
+   - **Greasy Fork** — open the
+     [script page](https://greasyfork.org/en/scripts/601914-sakamichi-mobame-translate)
+     and click **Install**.
    - **GitHub Releases** — open `sakamichi-mobame-translate.user.js` from the
      [latest release](https://github.com/zeem12/sakamichi-mobame-translate/releases/latest);
      your userscript manager shows an install page, where you click **Install**.

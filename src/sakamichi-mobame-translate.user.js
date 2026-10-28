@@ -349,39 +349,84 @@ presetTone: 'Neutral',
     let sk46SyncDebugBox = () => {};
 
     const SK46_STT_PROVIDERS = ['gemini', 'groq', 'openai'];
-
-    const SK46_STT_MODELS = {
-        gemini: [
-            { id: 'gemini-3.5-transcribe', note: '' },
-            { id: 'gemini-3.5-flash', note: 'No word timing' },
-            { id: 'gemini-2.5-flash', note: 'No word timing' },
-        ],
-        groq: [
-            { id: 'whisper-large-v3', note: '' },
-            { id: 'whisper-large-v3-turbo', note: 'Faster, less accurate' },
-        ],
-        openai: [
-            { id: 'gpt-4o-transcribe', note: '' },
-            { id: 'gpt-4o-mini-transcribe', note: 'Cheaper, less accurate' },
-        ],
-    };
-    const SK46_STT_DEFAULT_MODELS = {
-        gemini: SK46_STT_MODELS.gemini[0].id,
-        groq: SK46_STT_MODELS.groq[0].id,
-        openai: SK46_STT_MODELS.openai[0].id,
-    };
+    const sk46AudioModelsCache = new Map();
+    const sk46AudioModelFetchIds = new Map();
+    const sk46AudioModelLoads = new Map();
 
     function sk46IsDedicatedSttModel(model) {
         return /transcribe/i.test(String(model || ''));
     }
 
-    function sk46SttModelNote(providerId, modelId) {
-        const hit = (SK46_STT_MODELS[providerId] || []).find(m => m.id === modelId);
-        if (hit) return hit.note || '';
-        if (providerId === 'gemini' && modelId && !sk46IsDedicatedSttModel(modelId)) {
-            return 'No word timing';
+    function sk46SttCandidateKind(providerId, modelId) {
+        const id = String(modelId || '').toLowerCase();
+        if (!id) return null;
+        if (/embedding|aqa|tts|image|imagen|veo|live|realtime|native-audio|omni|nano-banana|computer-use|robotics|diariz|distil/.test(id)) return null;
+        if (providerId === 'gemini') {
+            if (!/^gemini(?:-|$)/.test(id)) return null;
+            if (/transcribe/.test(id)) return 'dedicated';
+            if (/flash-lite/.test(id)) return 'flash-lite';
+            if (/flash/.test(id)) return 'flash';
+            if (/pro/.test(id)) return 'pro';
+            return 'other';
+        }
+        if (providerId === 'groq' || providerId === 'openai') {
+            if (!/whisper|transcribe/.test(id)) return null;
+            return /whisper/.test(id) ? 'whisper' : 'transcribe';
+        }
+        return null;
+    }
+
+    function sk46SttSupportsWordTiming(providerId, modelId) {
+        if (providerId === 'gemini') return sk46IsDedicatedSttModel(modelId);
+        return /whisper/i.test(String(modelId || ''));
+    }
+
+    function sk46SttModelNoteFor(providerId, modelId, kind) {
+        if (providerId === 'gemini') return kind === 'dedicated' ? 'Word timing' : 'No word timing';
+        if (providerId === 'groq') return /turbo/i.test(String(modelId || '')) ? 'Faster, less accurate' : '';
+        if (providerId === 'openai') {
+            if (sk46SttSupportsWordTiming(providerId, modelId)) return 'Word timing';
+            return /mini/i.test(String(modelId || '')) ? 'Cheaper, no word timing' : 'No word timing';
         }
         return '';
+    }
+
+    function sk46SttModelNote(providerId, modelId) {
+        const cache = sk46AudioModelsCache.get(providerId);
+        const hit = cache && Array.isArray(cache.models)
+            ? cache.models.find(m => m.id === modelId)
+            : null;
+        if (hit) return hit.note || '';
+        const kind = sk46SttCandidateKind(providerId, modelId);
+        if (!kind) return '';
+        return sk46SttModelNoteFor(providerId, modelId, kind);
+    }
+
+    function sk46SttModelRank(providerId, modelId, kind) {
+        const id = String(modelId || '').toLowerCase();
+        let rank;
+        if (providerId === 'gemini') {
+            rank = kind === 'dedicated' ? 0
+                : kind === 'flash-lite' ? 1
+                    : kind === 'flash' ? 2
+                        : kind === 'pro' ? 4 : 5;
+        } else if (providerId === 'groq') {
+            rank = /turbo/.test(id) ? 1 : 0;
+        } else if (providerId === 'openai') {
+            if (/whisper/.test(id)) rank = 0;
+            else if (/transcribe/.test(id) && !/mini/.test(id)) rank = 1;
+            else if (/mini/.test(id)) rank = 2;
+            else rank = 3;
+        } else {
+            rank = 5;
+        }
+        if (/preview|exp(?:erimental)?/.test(id)) rank += 0.25;
+        return rank;
+    }
+
+    function sk46ModelVersion(modelId) {
+        const m = String(modelId || '').match(/\d+(?:\.\d+)?/);
+        return m ? parseFloat(m[0]) : 0;
     }
 
     const SK46_AUDIO_TRANSCRIBE_PROMPT = [
@@ -435,9 +480,11 @@ presetTone: 'Neutral',
 
     function sk46EffectiveAudioModel() {
         const p = sk46EffectiveAudioProvider();
-        const saved = (sk46State.audioModels && sk46State.audioModels[p])
-            || SK46_STT_DEFAULT_MODELS[p]
-            || null;
+        let saved = (sk46State.audioModels && sk46State.audioModels[p]) || null;
+        const cache = sk46AudioModelsCache.get(p);
+        if (cache && cache.status === 'ok' && Array.isArray(cache.models) && cache.models.length) {
+            if (!saved || !cache.models.some(m => m.id === saved)) saved = cache.models[0].id;
+        }
         sk46State.audioModel = saved;
         return saved;
     }
@@ -694,6 +741,7 @@ presetTone: 'Neutral',
             color: var(--sk46-sender-color, #888);
             cursor: pointer;
             pointer-events: auto;
+            overflow: visible;
             -webkit-tap-highlight-color: transparent;
             opacity: 0.85;
             transition: opacity 0.15s ease;
@@ -706,6 +754,45 @@ presetTone: 'Neutral',
         }
         .sk46-refresh-btn.spinning svg {
             animation: sk46-refresh-spin 0.9s linear infinite;
+        }
+        .sk46-refresh-btn.error {
+            color: #ef4444;
+            opacity: 1;
+        }
+        .sk46-refresh-tip {
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 8px);
+            z-index: 1;
+            width: max-content;
+            max-width: 240px;
+            transform: translateX(-50%);
+            padding: 7px 9px;
+            border: 1px solid #ececec;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+            color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.35;
+            text-align: left;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.12s ease, visibility 0.12s ease;
+        }
+        .sk46-refresh-tip.below {
+            bottom: auto;
+            top: calc(100% + 8px);
+        }
+        .sk46-refresh-btn.error:hover .sk46-refresh-tip:not(:empty),
+        .sk46-refresh-btn.error:focus .sk46-refresh-tip:not(:empty) {
+            opacity: 1;
+            visibility: visible;
         }
         .sk46-transcript-btn { color: var(--sk46-sender-color, #888); }
     `;
@@ -3299,6 +3386,13 @@ existing.transcript = cached.transcript;
         btn.className = 'sk46-refresh-btn';
         btn.setAttribute('aria-label', 'Refresh translation');
         btn.innerHTML = SK46_ICON_REFRESH;
+        const tip = document.createElement('span');
+        tip.className = 'sk46-refresh-tip';
+        tip.setAttribute('aria-hidden', 'true');
+        btn.appendChild(tip);
+        btn._sk46ErrorTip = tip;
+        btn.addEventListener('mouseenter', () => sk46PlaceRefreshErrorTip(btn));
+        btn.addEventListener('focus', () => sk46PlaceRefreshErrorTip(btn));
         btn.style.width = sk46RefreshBtnSizePx + 'px';
         btn.style.height = sk46RefreshBtnSizePx + 'px';
         btn.style.display = 'none';
@@ -3339,6 +3433,70 @@ existing.transcript = cached.transcript;
         btn.classList.toggle('spinning', spinning);
     }
 
+    function sk46CompactErrorText(error) {
+        let text = String(error || '').replace(/\s+/g, ' ').trim();
+        if (!text) return '';
+        text = text.replace(/^QUOTA:\s*/i, '');
+        const end = text.search(/[.!?](?=\s|$)/);
+        if (end >= 0) text = text.slice(0, end + 1);
+        const url = text.search(/https?:\/\//i);
+        if (url >= 0) text = text.slice(0, url);
+        text = text.replace(/\s+\*\s+.*$/, '').replace(/\s+/g, ' ').trim();
+        text = text.replace(/[\s,;:\-–—]+$/, '').trim();
+        if (text.length > 180) text = text.slice(0, 177).trimEnd() + '…';
+        return text;
+    }
+
+    function sk46RefreshErrorText(entry) {
+        const text = entry && entry.node && entry.node.text;
+        if (!text) return '';
+        const key = sk46TranslationCacheKey(text);
+        const cached = sk46TranslationCache.get(key);
+        return cached && cached.status === 'error'
+            ? String(cached.error || '')
+            : '';
+    }
+
+    function sk46PlaceRefreshErrorTip(btn) {
+        const tip = btn && btn._sk46ErrorTip;
+        if (!tip || !tip.textContent || !btn.isConnected || !btn.classList.contains('error')) return;
+        const rect = btn.getBoundingClientRect();
+        tip.classList.toggle('below', rect.top - tip.offsetHeight - 8 < 8);
+        const width = tip.offsetWidth;
+        const center = rect.left + rect.width / 2;
+        const minLeft = 8;
+        const maxRight = window.innerWidth - 8;
+        const left = center - width / 2;
+        const right = center + width / 2;
+        const shift = left < minLeft ? minLeft - left
+            : right > maxRight ? maxRight - right : 0;
+        tip.style.transform = shift ? `translateX(calc(-50% + ${Math.round(shift)}px))` : '';
+    }
+
+    function sk46UpdateRefreshBtnError(entry) {
+        const btn = entry && entry.refreshEl;
+        if (!btn) return;
+        const error = sk46RefreshErrorText(entry);
+        const summary = sk46CompactErrorText(error);
+        btn.classList.toggle('error', !!error);
+        btn.removeAttribute('title');
+        if (summary) {
+            btn.setAttribute('aria-label', `Refresh translation: ${summary}`);
+        } else {
+            btn.setAttribute('aria-label', 'Refresh translation');
+        }
+        if (btn._sk46ErrorTip) btn._sk46ErrorTip.textContent = summary;
+        sk46PlaceRefreshErrorTip(btn);
+    }
+
+    function sk46SyncRefreshBtnErrors() {
+        for (const entry of sk46TextEntries) {
+            if (!entry || !entry.refreshEl) continue;
+            sk46UpdateRefreshBtnSpinning(entry);
+            sk46UpdateRefreshBtnError(entry);
+        }
+    }
+
     function sk46RefreshEntryTranslation(entry) {
         if (!entry || !entry.node) return;
         const text = entry.node.text;
@@ -3347,8 +3505,10 @@ existing.transcript = cached.transcript;
         const key = entry.translationKey || sk46TranslationCacheKey(text);
         entry.translationKey = key;
 
+        if (sk46TranslationCache.get(key)?.status === 'error') sk46TranslationCache.delete(key);
         entry.isRefreshing = true;
         sk46UpdateRefreshBtnSpinning(entry);
+        sk46UpdateRefreshBtnError(entry);
         ;
 
         sk46GovernorCall(sk46State.provider, () => sk46CallLLMBatch([text]), sk46EstimateCallTokens(null, [text]))
@@ -3374,6 +3534,7 @@ existing.transcript = cached.transcript;
             .finally(() => {
                 entry.isRefreshing = false;
                 sk46UpdateRefreshBtnSpinning(entry);
+                sk46UpdateRefreshBtnError(entry);
             });
     }
 
@@ -3668,6 +3829,7 @@ existing.transcript = cached.transcript;
                 refreshEl = sk46BuildRefreshBtn(entry);
                 entry.refreshEl = refreshEl;
                 sk46RefreshLayer.appendChild(refreshEl);
+                sk46UpdateRefreshBtnError(entry);
             }
 
             sk46TextEntries.push(entry);
@@ -4024,6 +4186,7 @@ function sk46AudioVisibleNow() {
                 updated++;
             }
         }
+        sk46SyncRefreshBtnErrors();
         return updated;
     }
 
@@ -4528,17 +4691,45 @@ function sk46AudioVisibleNow() {
     }
 
     function sk46GeminiModelRank(id) {
-        if (/embed|tts|image|omni|aqa|live/i.test(id)) return 100;
-        if (/^gemini-2\.0-flash$/.test(id)) return 0;
-        if (/flash-lite/.test(id)) return 1;
-        if (/(^|[-_.])flash([-_.]|$)/.test(id)) return 2;
-        if (/^gemma/.test(id)) return 6;
-        if (/pro/.test(id)) return 8;
-        return 5;
+        const s = String(id || '').toLowerCase();
+        let rank = 5;
+        if (/flash-lite/.test(s)) rank = 0;
+        else if (/(^|[-_.])flash([-_.]|$)/.test(s)) rank = 1;
+        else if (/^gemma/.test(s)) rank = 3;
+        else if (/pro/.test(s)) rank = 4;
+        if (/preview|exp(?:erimental)?/.test(s)) rank += 0.25;
+        return rank;
     }
 
-    async function sk46FetchGeminiModels(apiKey) {
-        const res = await sk46GmFetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
+    function sk46GeminiSupportsSampling(model) {
+        const m = String(model || '').match(/gemini-(\d+)(?:\.(\d+))?/i);
+        if (!m) return true;
+        const major = Number(m[1]);
+        const minor = Number(m[2] || 0);
+        return major < 3 || (major === 3 && minor < 6);
+    }
+
+    function sk46GeminiThinkingConfig(model) {
+        const id = String(model || '').toLowerCase();
+        const m = id.match(/gemini-(\d+)(?:\.(\d+))?/);
+        if (!m) return null;
+        const major = Number(m[1]);
+        const minor = Number(m[2] || 0);
+        if (major >= 4) return { thinkingLevel: 'low' };
+        if (major === 3) {
+            if (/pro/.test(id)) return { thinkingLevel: 'low' };
+            if (minor >= 7) return { thinkingLevel: 'low' };
+            return { thinkingLevel: 'minimal' };
+        }
+        if (major === 2 && minor >= 5) {
+            if (/pro|flash-lite/.test(id)) return null;
+            if (/flash/.test(id)) return { thinkingBudget: 0 };
+        }
+        return null;
+    }
+
+    async function sk46FetchGeminiCatalog(apiKey) {
+        const res = await sk46GmFetch(`https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000&key=${encodeURIComponent(apiKey)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         return (data.models || []).filter(m => {
@@ -4547,23 +4738,29 @@ function sk46AudioVisibleNow() {
             const supports = m.supportedGenerationMethods || [];
             if (!supports.includes('generateContent')) return false;
             if (!(id.startsWith('gemini') || id.startsWith('gemma'))) return false;
-            if (['embedding', 'aqa', 'tts'].some(w => id.includes(w))) return false;
             return true;
         }).map(m => {
             const id = String(m.name || '').replace(/^models\//, '');
             return { id, name: m.displayName || id, context: m.inputTokenLimit || null };
-        }).sort((a, b) => {
+        });
+    }
+
+    async function sk46FetchGeminiModels(apiKey) {
+        const catalog = await sk46FetchGeminiCatalog(apiKey);
+        return catalog.filter(m =>
+            !/embedding|aqa|tts|image|imagen|veo|live|native-audio|omni|nano-banana|computer-use|robotics|transcribe/i.test(m.id)
+        ).sort((a, b) => {
             const rk = sk46GeminiModelRank(a.id) - sk46GeminiModelRank(b.id);
             if (rk !== 0) return rk;
-            const av = parseFloat((a.id.match(/[\d.]+/) || ['0'])[0]) || 0;
-            const bv = parseFloat((b.id.match(/[\d.]+/) || ['0'])[0]) || 0;
+            const av = sk46ModelVersion(a.id);
+            const bv = sk46ModelVersion(b.id);
             if (bv !== av) return bv - av;
             return a.id.localeCompare(b.id);
         });
     }
 
     async function sk46FetchAnthropicModels(apiKey) {
-        const res = await sk46GmFetch('https://api.anthropic.com/v1/models', {
+        const res = await sk46GmFetch('https://api.anthropic.com/v1/models?lifecycle=active&limit=1000', {
             headers: {
                 'x-api-key': apiKey,
                 'anthropic-version': '2023-06-01',
@@ -4577,7 +4774,7 @@ function sk46AudioVisibleNow() {
             .map(m => ({ id: m.id, name: m.display_name || m.id, context: null }));
     }
 
-    async function sk46FetchOpenAICompatModels(endpoint, apiKey) {
+    async function sk46FetchOpenAICompatCatalog(endpoint, apiKey) {
         let url;
         try {
             const u = new URL(endpoint);
@@ -4587,10 +4784,19 @@ function sk46AudioVisibleNow() {
         const res = await sk46GmFetch(url, { headers: { 'Authorization': `Bearer ${apiKey}` } });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const excl = ['embedding', 'embed-', 'whisper', 'tts', 'dall-e', 'image', 'moderation', 'davinci', 'babbage', 'ada', 'curie', 'realtime', 'audio', 'computer-use'];
-        return (data.data || []).filter(m => m && m.id && !excl.some(w => m.id.toLowerCase().includes(w)))
-            .map(m => ({ id: m.id, name: m.id, context: m.context_window || m.max_context_length || m.context_length || null }))
-            .sort((a, b) => a.id.localeCompare(b.id));
+        return (data.data || []).filter(m => m && m.id).map(m => ({
+            id: m.id,
+            name: m.id,
+            created: Number(m.created || m.created_at || 0) || 0,
+            context: m.context_window || m.max_context_length || m.context_length || null,
+        }));
+    }
+
+    async function sk46FetchOpenAICompatModels(endpoint, apiKey) {
+        const catalog = await sk46FetchOpenAICompatCatalog(endpoint, apiKey);
+        const excl = ['embedding', 'embed-', 'whisper', 'tts', 'dall-e', 'image', 'moderation', 'davinci', 'babbage', 'ada', 'curie', 'realtime', 'live', 'audio', 'transcribe', 'diariz', 'computer-use', 'sora'];
+        return catalog.filter(m => !excl.some(w => m.id.toLowerCase().includes(w)))
+            .sort((a, b) => (b.created - a.created) || a.id.localeCompare(b.id));
     }
 
     async function sk46FetchModelsForProvider(providerId, apiKey) {
@@ -4601,6 +4807,37 @@ function sk46AudioVisibleNow() {
         if (providerId === 'anthropic') return sk46FetchAnthropicModels(apiKey);
         if (prov.endpoint) return sk46FetchOpenAICompatModels(prov.endpoint, apiKey);
         throw new Error('No model listing available for this provider');
+    }
+
+    async function sk46FetchSttModelsForProvider(providerId, apiKey) {
+        if (!sk46SupportsStt(providerId)) throw new Error(`Provider "${providerId}" does not support transcription`);
+        if (!apiKey) throw new Error('Enter API key first');
+        let items = [];
+        if (providerId === 'gemini') {
+            const models = await sk46FetchGeminiCatalog(apiKey);
+            items = models.map(m => ({ id: m.id, name: m.name, created: 0 }));
+        } else {
+            const prov = sk46Provider(providerId);
+            if (!prov || !prov.endpoint) throw new Error('No model listing available for this provider');
+            items = await sk46FetchOpenAICompatCatalog(prov.endpoint, apiKey);
+        }
+        const models = items.map(m => {
+            const kind = sk46SttCandidateKind(providerId, m.id);
+            if (!kind) return null;
+            return {
+                id: m.id,
+                name: m.name || m.id,
+                note: sk46SttModelNoteFor(providerId, m.id, kind),
+                created: m.created || 0,
+                rank: sk46SttModelRank(providerId, m.id, kind),
+            };
+        }).filter(Boolean);
+        if (!models.length) throw new Error('No transcription models available');
+        return models.sort((a, b) =>
+            (a.rank - b.rank)
+            || (b.created - a.created)
+            || (sk46ModelVersion(b.id) - sk46ModelVersion(a.id))
+            || a.id.localeCompare(b.id));
     }
 
     const sk46ModelsCache = new Map();
@@ -4644,16 +4881,97 @@ function sk46AudioVisibleNow() {
         sk46RefreshChatModelViews();
     }
 
+    function sk46ReconcileAudioModelSelection(providerId, models) {
+        const ids = (models || []).map(m => m.id);
+        if (!ids.length) return null;
+        const saved = (sk46State.audioModels && sk46State.audioModels[providerId]) || null;
+        if (saved && ids.includes(saved)) {
+            if (sk46EffectiveAudioProvider() === providerId) sk46State.audioModel = saved;
+            return saved;
+        }
+        if (saved) {
+            ;
+        }
+        sk46SetAudioModel(providerId, ids[0]);
+        return ids[0];
+    }
+
+    function sk46RefreshAudioModelViews() {
+        if (sk46State.sheetView === 'audio') sk46RenderAudioView();
+        else if (sk46State.sheetView === 'audio-model-list') sk46RenderAudioModelList();
+    }
+
+    function sk46LoadAudioModelsForProvider(providerId) {
+        if (!sk46SupportsStt(providerId)) return Promise.resolve([]);
+        const existing = sk46AudioModelLoads.get(providerId);
+        if (existing) return existing;
+        const apiKey = String((sk46State.apiKeys && sk46State.apiKeys[providerId]) || '').trim();
+        if (!apiKey) {
+            sk46AudioModelsCache.set(providerId, { status: 'error', models: [], error: 'Enter API key first' });
+            sk46RefreshAudioModelViews();
+            return Promise.resolve([]);
+        }
+        const myFetchId = (sk46AudioModelFetchIds.get(providerId) || 0) + 1;
+        sk46AudioModelFetchIds.set(providerId, myFetchId);
+        sk46AudioModelsCache.set(providerId, { status: 'loading', models: [], error: null });
+        sk46RefreshAudioModelViews();
+        let task;
+        task = (async () => {
+            let models = [];
+            try {
+                models = await sk46FetchSttModelsForProvider(providerId, apiKey);
+                if (sk46AudioModelFetchIds.get(providerId) !== myFetchId) return [];
+                sk46AudioModelsCache.set(providerId, { status: 'ok', models, error: null });
+                sk46ReconcileAudioModelSelection(providerId, models);
+            } catch (e) {
+                if (sk46AudioModelFetchIds.get(providerId) !== myFetchId) return [];
+                sk46AudioModelsCache.set(providerId, { status: 'error', models: [], error: String(e.message || e) });
+                models = [];
+            } finally {
+                if (sk46AudioModelLoads.get(providerId) === task) sk46AudioModelLoads.delete(providerId);
+                sk46RefreshAudioModelViews();
+            }
+            return models;
+        })();
+        sk46AudioModelLoads.set(providerId, task);
+        return task;
+    }
+
+    async function sk46EnsureAudioModel() {
+        const providerId = sk46EffectiveAudioProvider();
+        const cache = sk46AudioModelsCache.get(providerId);
+        if (!cache || cache.status !== 'ok') await sk46LoadAudioModelsForProvider(providerId);
+        const model = sk46EffectiveAudioModel();
+        if (model) return model;
+        const latest = sk46AudioModelsCache.get(providerId);
+        throw new Error(latest && latest.error
+            ? `Failed to load transcription models: ${latest.error}`
+            : 'no transcription model selected');
+    }
+
     const sk46ApiKeyChangeTimers = new Map();
     function sk46ScheduleApiKeyChange(providerId) {
         const existing = sk46ApiKeyChangeTimers.get(providerId);
         if (existing) clearTimeout(existing);
         const t = setTimeout(() => {
             sk46ApiKeyChangeTimers.delete(providerId);
+            const chatActive = sk46State.provider === providerId;
+            const audioActive = sk46SupportsStt(providerId) && sk46EffectiveAudioProvider() === providerId;
             sk46ModelsCache.delete(providerId);
             sk46ModelFetchIds.delete(providerId);
-            if (sk46State.sheetView === 'model-list' && sk46State.provider === providerId) sk46RenderModelList();
-            else if ((sk46State.apiKeys[providerId] || '').trim()) sk46LoadModelsForProvider(providerId);
+            if (sk46SupportsStt(providerId)) {
+                sk46AudioModelsCache.delete(providerId);
+                sk46AudioModelFetchIds.delete(providerId);
+                sk46AudioModelLoads.delete(providerId);
+            }
+            if (chatActive) {
+                if (sk46State.sheetView === 'model-list') sk46RenderModelList();
+                else if ((sk46State.apiKeys[providerId] || '').trim()) sk46LoadModelsForProvider(providerId);
+            }
+            if (audioActive) {
+                if (sk46State.sheetView === 'audio-model-list') sk46RenderAudioModelList();
+                else if ((sk46State.apiKeys[providerId] || '').trim()) sk46LoadAudioModelsForProvider(providerId);
+            }
         }, 800);
         sk46ApiKeyChangeTimers.set(providerId, t);
     }
@@ -4749,8 +5067,10 @@ function sk46AudioVisibleNow() {
         sk46DisarmSheetItem();
     }
 
-    function sk46OpenApiKeyHelpPage() {
-        const prov = sk46Provider(sk46State.provider);
+    function sk46OpenApiKeyHelpPage(scope = 'chat') {
+        if (scope === 'audio' && sk46State.audioUseChatProvider) return;
+        const providerId = scope === 'audio' ? sk46EffectiveAudioProvider() : sk46State.provider;
+        const prov = sk46Provider(providerId);
         if (!prov || !prov.keyUrl) { ; return; }
         try { window.open(prov.keyUrl, '_blank', 'noopener,noreferrer'); }
         catch (e) { ; }
@@ -4899,7 +5219,7 @@ function sk46AudioVisibleNow() {
     const SK46_BATCH_URGENT_ITEMS = 8;
 
     const SK46_PROVIDER_QUOTAS = {
-        gemini:     { rpm: 10,  rpd: 250,   tpm: 250000,   tpd: 1000000,  items: 25, chars: 3600 },
+        gemini:     { rpm: 5,   rpd: 20,    tpm: 250000,   tpd: 1000000,  items: 25, chars: 3600 },
         groq:       { rpm: 30,  rpd: 1000,  tpm: 8000,     tpd: 200000,   items: 12, chars: 1600 },
         cerebras:   { rpm: 30,  rpd: 6000,  tpm: 60000,    tpd: 1000000,  items: 25, chars: 3600 },
         openrouter: { rpm: 20,  rpd: 50,    tpm: 100000,   tpd: 1000000,  items: 20, chars: 2800 },
@@ -4909,8 +5229,11 @@ function sk46AudioVisibleNow() {
     };
 
     const SK46_GEMINI_QUOTA_OVERRIDES = [
-        { re: /^gemini-2\.0-flash$/, rpm: 15, rpd: 1500 },
-        { re: /flash-lite/,          rpm: 15, rpd: 1000 },
+        { re: /^(?:gemini-2\.0-|gemini-2\.5-pro(?:-|$)|gemini-3\.1-pro(?:-|$)|gemini-4-argon(?:-|$))/, rpm: 5, rpd: Infinity, tpm: 250000, tpd: Infinity },
+        { re: /transcribe/,               rpm: 3,  rpd: 25,    tpm: 10000 },
+        { re: /^gemini-2\.5-flash-lite/,  rpm: 10, rpd: 20 },
+        { re: /flash-lite/,               rpm: 15, rpd: 500 },
+        { re: /gemma/,                    rpm: 30, rpd: 14400, tpm: 16000 },
     ];
 
     const SK46_AIMD_MIN_FACTOR = 0.1;
@@ -5203,9 +5526,10 @@ function sk46AudioVisibleNow() {
     const SK46_LLM_TEMPERATURE = 0.3;
     const SK46_LLM_TIMEOUT_MS = 45000;
     async function sk46CallGeminiBatch(prompt, apiKey, model, system, maxTokens) {
-        const genConfig = { maxOutputTokens: maxTokens || SK46_MIN_MAX_OUTPUT_TOKENS, temperature: SK46_LLM_TEMPERATURE };
-        if (/gemini-[3-9]/.test(model)) genConfig.thinkingConfig = { thinkingLevel: 'minimal' };
-        else if (/gemini-2\.[5-9]|thinking/.test(model)) genConfig.thinkingConfig = { thinkingBudget: 0 };
+        const genConfig = { maxOutputTokens: maxTokens || SK46_MIN_MAX_OUTPUT_TOKENS };
+        if (sk46GeminiSupportsSampling(model)) genConfig.temperature = SK46_LLM_TEMPERATURE;
+        const thinking = sk46GeminiThinkingConfig(model);
+        if (thinking) genConfig.thinkingConfig = thinking;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
         const body = JSON.stringify({
             system_instruction: { parts: [{ text: system || SK46_TRANSLATION_SYSTEM_INSTRUCTION }] },
@@ -5363,7 +5687,7 @@ function sk46AudioVisibleNow() {
         if (providerId !== 'gemini') return { ...base };
         const id = String(model || '');
         for (const o of SK46_GEMINI_QUOTA_OVERRIDES) {
-            if (o.re.test(id)) return { ...base, rpm: o.rpm, rpd: o.rpd };
+            if (o.re.test(id)) return { ...base, rpm: o.rpm, rpd: o.rpd, tpm: o.tpm == null ? base.tpm : o.tpm, tpd: o.tpd == null ? base.tpd : o.tpd };
         }
         return { ...base };
     }
@@ -5494,11 +5818,13 @@ function sk46AudioVisibleNow() {
 
     function sk46GovernorAbsorbHeaders(st, headers) {
         if (!headers) return;
+        const lower = {};
+        for (const k of Object.keys(headers)) lower[k.toLowerCase()] = headers[k];
         const num = k => {
-            const v = Number(headers[k]);
+            const v = Number(lower[k]);
             return Number.isFinite(v) && v > 0 ? v : 0;
         };
-        const rpd = num('x-ratelimit-limit-requests');
+        const rpd = num('x-ratelimit-limit-requests') || num('x-ratelimit-limit-requests-per-day');
         const tpm = num('x-ratelimit-limit-tokens');
         if (rpd && rpd !== st.headerRpd) { st.headerRpd = rpd; st.headerRpdSeenAt = Date.now(); }
         if (tpm && tpm !== st.headerTpm) { st.headerTpm = tpm; st.headerTpmSeenAt = Date.now(); }
@@ -5744,6 +6070,7 @@ function sk46AudioVisibleNow() {
             } else if (appliedPairs.length) {
                 ;
             }
+            sk46SyncRefreshBtnErrors();
         }).catch(err => {
             const duration = Date.now() - startedAt;
             sk46TranslationStats.batchesFailed++;
@@ -5771,6 +6098,7 @@ function sk46AudioVisibleNow() {
                     ts: Date.now(),
                 });
             }
+            sk46SyncRefreshBtnErrors();
         });
     }
 
@@ -6008,6 +6336,9 @@ function sk46AudioVisibleNow() {
         const useChat = !!sk46State.audioUseChatProvider;
         const eff = sk46EffectiveAudioProvider();
         const supported = sk46SupportsStt(eff);
+        if (supported && sk46EffectiveAudioApiKey() && !sk46AudioModelsCache.has(eff)) {
+            sk46LoadAudioModelsForProvider(eff);
+        }
         sk46AudioSameAsChatToggle.classList.toggle('on', useChat);
         sk46AudioSameAsChatToggle.setAttribute('aria-checked', String(useChat));
 
@@ -6057,11 +6388,33 @@ function sk46AudioVisibleNow() {
             sk46AudioModelListEl.innerHTML = '<div class="empty-hint">This provider does not support transcription.</div>';
             return;
         }
+        const apiKey = sk46EffectiveAudioApiKey();
+        if (!apiKey) {
+            sk46AudioModelListEl.innerHTML = '<div class="empty-hint">Enter API key first</div>';
+            return;
+        }
+        const cache = sk46AudioModelsCache.get(eff);
+        if (!cache) {
+            sk46AudioModelListEl.innerHTML = '<div class="empty-hint">Loading models…</div>';
+            sk46LoadAudioModelsForProvider(eff);
+            return;
+        }
+        if (cache.status === 'loading') {
+            sk46AudioModelListEl.innerHTML = '<div class="empty-hint">Loading models…</div>';
+            return;
+        }
+        if (cache.status === 'error') {
+            sk46AudioModelListEl.innerHTML = `<div class="empty-hint">⚠ ${sk46Esc(cache.error || 'Failed to load models')}</div>`;
+            return;
+        }
         const current = sk46EffectiveAudioModel();
-        const known = (SK46_STT_MODELS[eff] || []).map(m => ({ id: m.id, note: m.note || '' }));
-        
+        const known = (cache.models || []).map(m => ({ id: m.id, note: m.note || '' }));
         if (current && !known.some(m => m.id === current)) {
             known.unshift({ id: current, note: sk46SttModelNote(eff, current) });
+        }
+        if (!known.length) {
+            sk46AudioModelListEl.innerHTML = '<div class="empty-hint">No transcription models available</div>';
+            return;
         }
         sk46AudioModelListEl.innerHTML = known.map(m => {
             const sel = m.id === current;
@@ -6070,15 +6423,15 @@ function sk46AudioVisibleNow() {
         }).join('');
     }
 
-    sk46ApiKeyHelpBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); sk46OpenApiKeyHelpPage(); });
+    sk46ApiKeyHelpBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); sk46OpenApiKeyHelpPage('chat'); });
     sk46ApiKeyHelpBtn.addEventListener('mousedown', (e) => e.stopPropagation());
 
     if (sk46ChatApiKeyHelpBtn) {
-        sk46ChatApiKeyHelpBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); sk46OpenApiKeyHelpPage(); });
+        sk46ChatApiKeyHelpBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); sk46OpenApiKeyHelpPage('chat'); });
         sk46ChatApiKeyHelpBtn.addEventListener('mousedown', (e) => e.stopPropagation());
     }
     if (sk46AudioApiKeyHelpBtn) {
-        sk46AudioApiKeyHelpBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); sk46OpenApiKeyHelpPage(); });
+        sk46AudioApiKeyHelpBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); sk46OpenApiKeyHelpPage('audio'); });
         sk46AudioApiKeyHelpBtn.addEventListener('mousedown', (e) => e.stopPropagation());
     }
 
@@ -6095,12 +6448,8 @@ function sk46AudioVisibleNow() {
             if (!sk46State.audioModels || typeof sk46State.audioModels !== 'object') {
                 sk46State.audioModels = {};
             }
-            sk46State.audioModel = sk46State.audioModels[id]
-                || SK46_STT_DEFAULT_MODELS[id]
-                || null;
+            sk46State.audioModel = sk46State.audioModels[id] || null;
             sk46PersistKeyDebounced('audioModel', 300);
-            sk46ModelsCache.delete(id);
-            sk46ModelFetchIds.delete(id);
             sk46RenderAudioProviderList();
             sk46RenderAudioView();
             sk46RenderAudioModelList();
@@ -6955,7 +7304,7 @@ function sk46AudioVisibleNow() {
         return raw;
     }
 
-function sk46NormalizeWordTimings(raw) {
+    function sk46NormalizeWordTimings(raw) {
         if (!Array.isArray(raw)) return [];
         const out = [];
         for (const item of raw) {
@@ -6986,27 +7335,23 @@ function sk46NormalizeWordTimings(raw) {
 
     function sk46ExtractTranscription(data) {
         const d = data && data.candidates && data.candidates[0];
-        if (!d) return { text: '', detail: 'no candidate' };
+        if (!d) return { text: '', words: [], detail: 'no candidate' };
         const parts = (d.content && d.content.parts) || [];
         let text = '';
         const shape = [];
         const rawWords = [];
         for (const p of parts) {
-        if (!p || typeof p !== 'object') continue;
-        shape.push(Object.keys(p).join('+') || '(empty)');
-        const at = p.audioTranscription || p.audio_transcription;
-        if (at && typeof at === 'object') {
-        if (typeof at.text === 'string') text += at.text;
-        if (Array.isArray(at.words)) rawWords.push(...at.words);
-        } else if (typeof p.text === 'string') {
-        text += sk46UnwrapTranscriptionText(p.text);
+            if (!p || typeof p !== 'object') continue;
+            shape.push(Object.keys(p).join('+') || '(empty)');
+            const at = p.audioTranscription || p.audio_transcription;
+            const atText = at && typeof at === 'object' && typeof at.text === 'string' ? at.text : '';
+            if (atText.trim()) text += atText;
+            else if (typeof p.text === 'string') text += sk46UnwrapTranscriptionText(p.text);
+            if (at && typeof at === 'object' && Array.isArray(at.words)) rawWords.push(...at.words);
         }
-        }
-        const words = sk46NormalizeWordTimings(rawWords);
         return {
-        text,
-        words,
             text: text.trim(),
+            words: sk46NormalizeWordTimings(rawWords),
             detail: 'parts=[' + shape.join(', ') + '] finishReason=' + (d.finishReason || '?'),
         };
     }
@@ -7028,9 +7373,10 @@ function sk46NormalizeWordTimings(raw) {
             
             parts.push({ text: SK46_AUDIO_TRANSCRIBE_PROMPT });
             
-            body.generationConfig = { temperature: 0.2 };
-            if (/gemini-[3-9]/.test(model)) body.generationConfig.thinkingConfig = { thinkingLevel: 'minimal' };
-            else if (/gemini-2\.[5-9]|thinking/.test(model)) body.generationConfig.thinkingConfig = { thinkingBudget: 0 };
+            const genConfig = {};
+            const thinking = sk46GeminiThinkingConfig(model);
+            if (thinking) genConfig.thinkingConfig = thinking;
+            if (Object.keys(genConfig).length) body.generationConfig = genConfig;
         }
         sk46Trace('stt:request', {
             provider: 'gemini',
@@ -7097,6 +7443,8 @@ const data = await res.json();
         const boundary = '----sk46' + Math.random().toString(36).slice(2);
         const ext = (file.match(SK46_AUDIO_EXT_RE) || ['', 'm4a'])[0].replace('.', '');
         const mime = 'audio/' + (ext === 'm4a' ? 'mp4' : ext);
+        const wordTimings = sk46SttSupportsWordTiming(provider, model);
+        const responseFormat = wordTimings ? 'verbose_json' : 'json';
         
         const enc = new TextEncoder();
         const segs = [];
@@ -7106,10 +7454,12 @@ const data = await res.json();
         segs.push(enc.encode(
             `\r\n--${boundary}\r\nContent-Disposition: form-data; name="model"\r\n\r\n${model}`));
         segs.push(enc.encode(
-            `\r\n--${boundary}\r\nContent-Disposition: form-data; name="response_format"\r\n\r\nverbose_json`));
+            `\r\n--${boundary}\r\nContent-Disposition: form-data; name="response_format"\r\n\r\n${responseFormat}`));
         
-        segs.push(enc.encode(
-            `\r\n--${boundary}\r\nContent-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\nword`));
+        if (wordTimings) {
+            segs.push(enc.encode(
+                `\r\n--${boundary}\r\nContent-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\nword`));
+        }
         segs.push(enc.encode(`\r\n--${boundary}--\r\n`));
 
         let total = 0;
@@ -7126,8 +7476,8 @@ const data = await res.json();
             audioBytes: buffer.byteLength,
             audioKB: Math.round(buffer.byteLength / 1024),
             mime,
-            responseFormat: 'verbose_json',
-            timestampGranularities: 'word',
+            responseFormat,
+            timestampGranularities: wordTimings ? 'word' : 'none',
             bodyBytes: body.length,
             endpoint,
         });
@@ -7156,7 +7506,7 @@ const data = await res.json();
         const text = parsed && parsed.text;
         if (!text || !String(text).trim()) throw new Error('empty transcript');
         
-        const words = sk46NormalizeWordTimings(parsed && parsed.words);
+        const words = wordTimings ? sk46NormalizeWordTimings(parsed && parsed.words) : [];
         sk46Trace('stt:response', {
             provider,
             file,
@@ -7170,11 +7520,10 @@ const data = await res.json();
 
     async function sk46TranscribeAudio(url, file, preloadedBuffer) {
         const provider = sk46EffectiveAudioProvider();
-        const model = sk46EffectiveAudioModel();
         const apiKey = sk46EffectiveAudioApiKey();
         if (!sk46SupportsStt(provider)) throw new Error('provider ' + provider + ' does not support transcription');
         if (!apiKey) throw new Error('API key for ' + provider + ' is not set');
-        if (!model) throw new Error('no transcription model selected');
+        const model = await sk46EnsureAudioModel();
         let buffer = preloadedBuffer || null;
         if (buffer) {
             ;
