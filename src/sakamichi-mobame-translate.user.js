@@ -56,70 +56,6 @@
             accent: '#75BCE1',
         }),
     });
-    const SK46_GROUP_MEMBERS = Object.freeze({
-        sakura: [
-            // 1st Gen
-            '小池美波 (Koike Minami)',
-            // 2nd Gen
-            '井上梨名 (Inoue Rina / Inori)', '遠藤光莉 (Endo Hikari / Hikari)', '大園玲 (Ozono Rei / Rei, Zono)',
-            '大沼晶保 (Onuma Akiho / Numa, Akipo)', '幸阪茉里乃 (Kosaka Marino / Marino)', '武元唯衣 (Takemoto Yui / Chuke)',
-            '田村保乃 (Tamura Hono / Honosu, Hono)', '藤吉夏鈴 (Fujiyoshi Karin / Karin)', '増本綺良 (Masumoto Kira / Kirako)',
-            '松田里奈 (Matsuda Rina / Matsuda, Matsuri)', '森田ひかる (Morita Hikaru / Run, Run-chan, Hikaru)',
-            '守屋麗奈 (Moriya Rena / Rena, Renana)', '山﨑天 (Yamazaki Ten / Tenchan, Ten)',
-            // 3rd Gen
-            '石森璃花 (Ishimori Rika / Rika)', '遠藤理子 (Endo Riko / Enriko)', '小田倉麗奈 (Odakura Reina / Reina)',
-            '小島凪紗 (Kojima Nagisa / Nagi)', '谷口愛季 (Taniguchi Airi / Airi)', '中嶋優月 (Nakashima Yuzuki / Yuzu)',
-            '的野美青 (Matono Mio / Mio)', '向井純葉 (Mukai Itoha / Itoha)', '村山美羽 (Murayama Miu / Miu)',
-            '村井優 (Murai Yu / Yu)', '山下瞳月 (Yamashita Shizuki / Shii, Shiichan)',
-            // 4th Gen
-            '浅井恋乃未 (Asai Konomi / Konomi)', '稲熊ひな (Inaguma Hina / Hina)', '勝又春 (Katsumata Haru / Haru)',
-            '佐藤愛桜 (Sato Neo / Neo)', '中川智尋 (Nakagawa Chihiro / Chiitan)', '松本和子 (Matsumoto Wako / Wakochi)',
-            '目黒陽色 (Meguro Hiiro / Hiiro)', '山川宇衣 (Yamakawa Ui / Ui)', '山田桃実 (Yamada Momomi / Momo)',
-            // Notable Grads
-            '菅井友香 (Sugai Yuka)', '渡邉理佐 (Watanabe Risa)', '小林由依 (Kobayashi Yui)', '土生瑞穂 (Habu Mizuho)'
-        ],
-        nogi: [
-            // 3rd Gen
-            '伊藤理々杏 (Ito Riria / Ririan)', '岩本蓮加 (Iwamoto Renka / Rentan)', '吉田綾乃クリスティー (Yoshida Ayano Christie / Ayatii)',
-            // 4th Gen
-            '遠藤さくら (Endo Sakura / Sakura, Sakuchan)', '賀喜遥香 (Kaki Haruka / Kakki)', '金川紗耶 (Kanagawa Saya / Yanchan)',
-            '黒見明香 (Kuromi Haruka / Kuromin)', '柴田柚菜 (Shibata Yuna / Yunchan)', '田村真佑 (Tamura Mayu / Mayutan)',
-            '筒井あやめ (Tsutsui Ayame / Ayamen)', '林瑠奈 (Hayashi Runa / Runachan)', '弓木奈於 (Yumiki Nao / Naochan)',
-            // 5th Gen
-            '五百城茉央 (Ioki Mao / Iochan)', '池田瑛紗 (Ikeda Teresa / Teresa)', '一ノ瀬美空 (Ichinose Miku / Kuuchan, Mikku)',
-            '井上和 (Inoue Nagi / Nagi)', '岡本姫奈 (Okamoto Hina / Hiichan)', '小川彩 (Ogawa Aya / Aaya)',
-            '奥田いろは (Okuda Iroha / Iroha)', '川﨑桜 (Kawasaki Sakura / Sakutan)', '菅原咲月 (Sugawara Satsuki / Satsukichan)',
-            '冨里奈央 (Tomisato Nao / Naonao)', '中西アルノ (Nakanishi Aruno / Aruno)',
-            // 6th Gen
-            '愛宕心響 (Atago Kokone / Kokonen)', '大越ひなの (Okoshi Hinano / Hinano)', '小津玲奈 (Ozu Reina / Reina)',
-            '海邉朱莉 (Kaibe Akari / Akari)', '川端晃菜 (Kawabata Hina / Hiitsun)', '鈴木佑捺 (Suzuki Yuuna / Yuuna)',
-            '瀬戸口心月 (Setoguchi Mitsuki / Mitsuki)', '長嶋凛桜 (Nagashima Rio / Riotan)', '増田三莉音 (Masuda Mirine / Mirine)',
-            '森平麗心 (Morihira Urumi / Urumin)', '矢田萌華 (Yada Moeka / Yadachan)',
-            // Notable Grads
-            '齋藤飛鳥 (Saito Asuka)', '山下美月 (Yamashita Mizuki)', '白石麻衣 (Shiraishi Mai)', '西野七瀬 (Nishino Nanase)',
-            '生田絵梨花 (Ikuta Erika)', '秋元真夏 (Akimoto Manatsu)'
-        ],
-        hinata: [
-            // 2nd Gen
-            '金村美玖 (Kanemura Miku / Miku, Osushi)', '小坂菜緒 (Kosaka Nao / Nao, Kosakana)',
-            // 3rd Gen
-            '上村ひなの (Kamimura Hinano / Nano, Hinanon)', '髙橋未来虹 (Takahashi Mikuni / Mikuni)',
-            '森本茉莉 (Morimoto Marie / Marimoto)', '山口陽世 (Yamaguchi Haruyo / Paru, Paruyo)',
-            // 4th Gen
-            '石塚瑶季 (Ishizuka Tamaki / Tamachan)', '小西夏菜実 (Konishi Nanami / Konishi)', '清水理央 (Shimizu Rio / Riotamu)',
-            '正源司陽子 (Shogenji Yoko / Yoko, Shogenko)', '竹内希来里 (Takeuchi Kirari / Kirarin)', '平尾帆夏 (Hirao Honoka / Hiraho)',
-            '平岡海月 (Hiraoka Mitsuki / Micchan)', '藤嶌果歩 (Fujishima Kaho / Kahorin)', '宮地すみれ (Miyachi Sumire / Sumire)',
-            '山下葉留花 (Yamashita Haruka / Haruharu)', '渡辺莉奈 (Watanabe Rina / Rina, Rinachan)',
-            // 5th Gen
-            '大田美月 (Ota Mizuki / Miichan)', '大野愛実 (Ono Manami / Manamin)', '片山紗希 (Katayama Saki / Saki)',
-            '蔵盛妃那乃 (Kuramori Hinano / Hinanon)', '坂井新奈 (Sakai Nina / Niitan)', '佐藤優羽 (Sato Yu / Yuuchan)',
-            '下田衣珠季 (Shimoda Izuki / Izuki)', '高井俐香 (Takai Rika / Rikatan)', '鶴崎仁香 (Tsurusaki Niko / Nikochan)',
-            '松尾桜 (Matsuo Sakura / Sakura)',
-            // Notable Grads
-            '齊藤京子 (Saito Kyoko)', '佐々木美玲 (Sasaki Mirei)', '丹生明里 (Nibu Akari)', '松田好花 (Matsuda Konoka)',
-            '渡邉美穂 (Watanabe Miho)', '東村芽依 (Higashimura Mei)'
-        ]
-    });
     const SK46_GROUP = SK46_GROUPS[location.hostname];
     if (!SK46_GROUP) return;
 
@@ -134,9 +70,9 @@
         pictureCaptionBiasPx: -8,
         mirrorRightPadExtraPx: 5,
         mirrorBgBleedTopPx: 10,
-        mirrorBgBleedRightPx: 30,
-        mirrorBgBleedBottomPx: 10,
-        mirrorBgBleedLeftPx: 24.5,
+        mirrorBgBleedRightPx: 16,
+        mirrorBgBleedBottomPx: 20,
+        mirrorBgBleedLeftPx: 16,
         skipUnreadButtons: true,
         maskFloatingButtons: true,
         showTranslateBtn: true,
@@ -224,6 +160,18 @@ presetTone: 'Neutral',
                 const current = sk46GmGet(SK46_PERSIST_PREFIX + k, undefined);
                 if (current === undefined) sk46State[k] = oldBleed;
             }
+        }
+        if (sk46State.mirrorBgBleedRightPx === 30 || sk46State.mirrorBgBleedRightPx === 0) {
+            sk46State.mirrorBgBleedRightPx = 16;
+            sk46PersistKey('mirrorBgBleedRightPx');
+        }
+        if (sk46State.mirrorBgBleedLeftPx === 24.5 || sk46State.mirrorBgBleedLeftPx === 0) {
+            sk46State.mirrorBgBleedLeftPx = 16;
+            sk46PersistKey('mirrorBgBleedLeftPx');
+        }
+        if (sk46State.mirrorBgBleedBottomPx === 10) {
+            sk46State.mirrorBgBleedBottomPx = 20;
+            sk46PersistKey('mirrorBgBleedBottomPx');
         }
         if (!sk46State.apiKeys || typeof sk46State.apiKeys !== 'object') sk46State.apiKeys = {};
 
@@ -712,6 +660,7 @@ presetTone: 'Neutral',
             position: fixed; box-sizing: border-box; pointer-events: none;
             background: rgba(100,116,139,.18);
             border: 1.5px dashed #64748b;
+            border-radius: 14px;
             transition: opacity 0.15s ease;
         }
         .sk46-mirror-bg--preview { background: #F7F7F7; border-color: transparent; }
@@ -1006,18 +955,57 @@ function sk46ForwardWheelToFlutter(e) {
         sk46StyleObserver.observe(host, { subtree: true, attributes: true, attributeFilter: ['style'] });
     }
 
+    function sk46IsRichTextContainer(el) {
+        if (!el) return false;
+        if (el.getAttribute('role') === 'group') return false;
+        const text = (el.textContent || '').trim();
+        if (!text || !sk46HasJapanese(text)) return false;
+        const childSemantics = el.querySelectorAll('flt-semantics, flt-semantics-container');
+        if (!childSemantics.length) return false;
+        if (el.querySelector('[role="group"]')) return false;
+        if (el.querySelector('[role="button"][flt-tappable], input, [aria-owns]')) return false;
+        const hasLink = !!el.querySelector('a, [role="link"]');
+        const hasMultipleSpans = childSemantics.length > 1;
+        if (!hasLink && !hasMultipleSpans) return false;
+        let r;
+        try { r = el.getBoundingClientRect(); } catch { return false; }
+        return r && r.width > 0 && r.height >= SK46_TEXT_MIRROR_MIN_HEIGHT_PX;
+    }
+
     function sk46ClassifyTree(host) {
         if (!host) return [];
         const all = Array.from(host.querySelectorAll('flt-semantics, flt-semantics-container'));
+        const richTextContainers = new Set();
+        for (const el of all) {
+            if (sk46IsRichTextContainer(el)) richTextContainers.add(el);
+        }
+        for (const rtc of Array.from(richTextContainers)) {
+            for (const other of Array.from(richTextContainers)) {
+                if (other !== rtc && rtc.contains(other)) {
+                    richTextContainers.delete(other);
+                }
+            }
+        }
+        const richTextDescendants = new Set();
+        for (const rtc of richTextContainers) {
+            for (const desc of rtc.querySelectorAll('flt-semantics, flt-semantics-container')) {
+                richTextDescendants.add(desc);
+            }
+        }
+
         return all.map((el, i) => {
-            const isLeaf = !el.querySelector('flt-semantics, flt-semantics-container');
+            const isRtc = richTextContainers.has(el);
+            const isRtcDesc = richTextDescendants.has(el);
+            const isLeaf = isRtc || !el.querySelector('flt-semantics, flt-semantics-container');
             const rect = el.getBoundingClientRect();
             const text = (el.textContent || '').trim();
             const chain = [];
             let p = el.parentElement;
             while (p && p !== host) { chain.unshift(p.tagName.toLowerCase()); p = p.parentElement; }
             let category;
-            if (!isLeaf) category = 'container';
+            if (isRtcDesc) category = 'rich-text-child';
+            else if (isRtc) category = 'text';
+            else if (!isLeaf) category = 'container';
             else if (text) category = 'text';
             else if (rect.width === 0 || rect.height === 0) category = 'empty-zero';
             else {
@@ -1057,7 +1045,7 @@ function sk46ForwardWheelToFlutter(e) {
         const h2 = host.querySelector('h2');
         if (!h2) return null;
         const h2Rect = h2.getBoundingClientRect();
-        if (h2Rect.width < 80 || h2Rect.height === 0 || h2Rect.height > 60) return null;
+        if (h2Rect.width < 20 || h2Rect.height === 0 || h2Rect.height > 60) return null;
         if (h2Rect.bottom <= 0) return null;
         const parent = h2.parentElement;
         if (!parent) return null;
@@ -1135,11 +1123,19 @@ function sk46ForwardWheelToFlutter(e) {
         return rect.top <= sk46StickyBoundary + SK46_TOP_BOUNDARY_TOLERANCE_PX;
     }
     function sk46ApplyHeaderClip(el, rect, entry, which) {
-        const rawInset = Math.max(0, sk46StickyBoundary - rect.top);
-        const insetTop = Math.min(rawInset, rect.height);
-        const val = insetTop > 0 ? `inset(${Math.round(insetTop)}px 0 0 0)` : 'none';
+        const rectTop = rect.top;
+        const rectHeight = (rect.height != null) ? rect.height : (rect.bottom - rect.top);
+        const rectBottom = (rect.bottom != null) ? rect.bottom : (rect.top + rectHeight);
+        const rawInsetTop = Math.max(0, sk46StickyBoundary - rectTop);
+        const insetTop = Math.min(rawInsetTop, rectHeight);
+        const bottomLimit = sk46GetBottomLimit();
+        const rawInsetBottom = Math.max(0, rectBottom - bottomLimit);
+        const insetBottom = Math.min(rawInsetBottom, rectHeight);
+        const val = (insetTop > 0 || insetBottom > 0)
+            ? `inset(${Math.round(insetTop)}px 0 ${Math.round(insetBottom)}px 0)`
+            : 'none';
         if (entry) sk46DebugSeam.state(entry, which === 'mirror' ? 'clipMirror' : 'clipBg', val,
-            `stickyBoundary=${Math.round(sk46StickyBoundary)} rectTop=${Math.round(rect.top)} rectH=${Math.round(rect.height)}`);
+            `stickyBoundary=${Math.round(sk46StickyBoundary)} bottomLimit=${Math.round(bottomLimit)} rectTop=${Math.round(rectTop)} rectH=${Math.round(rectHeight)}`);
         el.style.clipPath = val === 'none' ? 'none' : val;
     }
 
@@ -1250,7 +1246,7 @@ function sk46ForwardWheelToFlutter(e) {
     }
 
     function sk46IsAtBottomBoundary(rect) {
-        return rect.bottom >= sk46GetBottomLimit() - SK46_BOTTOM_BOUNDARY_TOLERANCE_PX;
+        return rect.top >= sk46GetBottomLimit() - SK46_BOTTOM_BOUNDARY_TOLERANCE_PX;
     }
 
     function sk46CancelSenderColorRetry() {
@@ -2485,13 +2481,30 @@ function sk46AnchorTokens(text) {
         const cleaned = String(raw || '').replace(/```[a-z]*\s*/gi, '').replace(/```\s*/g, '').trim();
         const rawLines = cleaned.split('\n');
         const byId = new Map();
+        let currentId = null;
         for (const line of rawLines) {
             const m = line.match(/^\s*\[(\d+)\]\s*(.*)$/);
-            if (!m) continue;
-            const id = parseInt(m[1], 10);
-            if (id < 1 || id > n) continue;
-            if (byId.has(id)) continue;
-            byId.set(id, sk46DecodeLineBreaks(m[2].trim()));
+            if (m) {
+                const id = parseInt(m[1], 10);
+                if (id >= 1 && id <= n) {
+                    currentId = id;
+                    const content = m[2].trim();
+                    if (!byId.has(id)) {
+                        byId.set(id, sk46DecodeLineBreaks(content));
+                    } else {
+                        const prev = byId.get(id);
+                        byId.set(id, prev ? prev + ' ' + sk46DecodeLineBreaks(content) : sk46DecodeLineBreaks(content));
+                    }
+                    continue;
+                }
+            }
+            if (currentId != null) {
+                const trimmed = line.trim();
+                if (trimmed) {
+                    const prev = byId.get(currentId) || '';
+                    byId.set(currentId, prev ? prev + ' ' + sk46DecodeLineBreaks(trimmed) : sk46DecodeLineBreaks(trimmed));
+                }
+            }
         }
         if (byId.size < Math.min(2, n)) {
             
@@ -3547,8 +3560,8 @@ existing.transcript = cached.transcript;
         return 'center';
     }
     function sk46ApplyMirrorAnchor(mirrorEl, rect, mode, naturalHeight) {
-        const SK46_MIRROR_CONTAINER_PAD_RIGHT = 45;
-        const SK46_MIRROR_CONTAINER_PAD_LEFT = 45;
+        const SK46_MIRROR_CONTAINER_PAD_RIGHT = 24;
+        const SK46_MIRROR_CONTAINER_PAD_LEFT = 24;
         mirrorEl.dataset.sk46Anchor = mode;
         mirrorEl.style.left = rect.left + 'px';
         mirrorEl.style.width = rect.width + 'px';
@@ -3567,8 +3580,8 @@ existing.transcript = cached.transcript;
             mirrorEl.style.bottom = '';
             mirrorEl.style.paddingTop = '0px';
             mirrorEl.style.paddingBottom = '0px';
-            mirrorEl.style.overflow = 'visible';
-            mirrorEl.style.maxHeight = 'none';
+            mirrorEl.style.overflow = 'hidden';
+            mirrorEl.style.maxHeight = rect.height + 'px';
         }
     }
 
@@ -3617,21 +3630,26 @@ existing.transcript = cached.transcript;
             height: Math.max(0, r.height - 2 * SK46_MIRROR_TEXT_PAD),
         };
     }
-    function sk46BgRectFromTextRect(textRect, kind) {
+    function sk46BgRectFromTextRect(textRect, kind, nodeRect = null) {
         if (kind !== 'preview') return textRect;
         const t = sk46State.mirrorBgBleedTopPx;
         const r = sk46State.mirrorBgBleedRightPx;
         const b = sk46State.mirrorBgBleedBottomPx;
         const l = sk46State.mirrorBgBleedLeftPx;
+        const top = textRect.top - t;
+        const height = Math.max(0, textRect.height + t + b);
+        const bgLeft = textRect.left - l;
+        const width = Math.max(0, textRect.width + l + r);
         return {
-            left: textRect.left - l,
-            top: textRect.top - t,
-            width: Math.max(0, textRect.width + l + r),
-            height: Math.max(0, textRect.height + t + b),
+            left: bgLeft,
+            top,
+            bottom: top + height,
+            width,
+            height,
         };
     }
-    function sk46BuildMirrorBg(textRect, kind) {
-        const bgRect = sk46BgRectFromTextRect(textRect, kind);
+    function sk46BuildMirrorBg(textRect, kind, nodeRect = null) {
+        const bgRect = sk46BgRectFromTextRect(textRect, kind, nodeRect);
         const bg = document.createElement('div');
         bg.className = 'sk46-mirror-bg'
             + (kind === 'preview' ? ' sk46-mirror-bg--preview' : '');
@@ -3790,20 +3808,19 @@ existing.transcript = cached.transcript;
                     const mirrorRectNow = mirrorEl.getBoundingClientRect();
                     origTextW = textRect.width;
                     origTextH = textRect.height;
-                    if (anchorMode === 'bottom') {
-                        origTextTopFromBottom = mirrorRectNow.bottom - textRect.top;
-                    } else {
-                        origTextTopFromTop = textRect.top - mirrorRectNow.top;
-                    }
+                    origTextTopFromTop = textRect.top - mirrorRectNow.top;
+                    origTextTopFromBottom = (anchorMode === 'bottom')
+                        ? (mirrorRectNow.bottom - textRect.top)
+                        : (origTextH + SK46_MIRROR_CONTAINER_PAD_Y + SK46_MIRROR_TEXT_PAD);
                     if (_bgNeedSwap) {
                         _bgTextEl.textContent = _bgSavedContent;
                         try { void _bgTextEl.offsetHeight; } catch {}
                     }
                     try { mirrorEl.firstElementChild.style.transform = ''; } catch {}
-                    bgEl = sk46BuildMirrorBg(textRect, bgKind);
+                    bgEl = sk46BuildMirrorBg(textRect, bgKind, n.rect);
                     if (atBottom) bgEl.style.display = 'none';
                     sk46MirrorBgLayer.appendChild(bgEl);
-                    sk46ApplyHeaderClip(bgEl, sk46BgRectFromTextRect(textRect, bgKind), { dbgId, dbgTextPreview: n.text }, 'bg');
+                    sk46ApplyHeaderClip(bgEl, sk46BgRectFromTextRect(textRect, bgKind, n.rect), { dbgId, dbgTextPreview: n.text }, 'bg');
                 }
 
                 if (wantRefreshBtn) {
@@ -3970,7 +3987,8 @@ function sk46AudioVisibleNow() {
             if (refreshEl) {
                 const buttonTop = r.top + sk46RefreshBtnOffsetYPx;
                 const overlapsHeader = buttonTop < sk46StickyBoundary - SK46_STICKY_EPSILON_PX;
-                const visible = !hidden && !hideForBottomBoundary && !overlapsHeader;
+                const overlapsBottom = buttonTop + sk46RefreshBtnSizePx > sk46GetBottomLimit();
+                const visible = !hidden && !hideForBottomBoundary && !overlapsHeader && !overlapsBottom;
                 sk46UpdateRefreshBtnPosition(entry, r, visible);
                 sk46UpdateRefreshBtnSpinning(entry);
             }
@@ -3992,6 +4010,7 @@ function sk46AudioVisibleNow() {
             if (!mirrorEl || mirrorEl.style.display === 'none') continue;
             mirrorReads.push({
                 entry, mirrorEl, bgEl, bgKind,
+                nodeRect: rects[i],
                 mirrorRect: mirrorEl.getBoundingClientRect(),
                 textRect: bgEl ? sk46TextContentRect(mirrorEl) : null,
             });
@@ -4000,7 +4019,7 @@ function sk46AudioVisibleNow() {
     }
 
     function sk46ApplyOverlayGeometry(mirrorReads) {
-        for (const { entry, mirrorEl, bgEl, bgKind, mirrorRect, textRect } of mirrorReads) {
+        for (const { entry, mirrorEl, bgEl, bgKind, nodeRect, mirrorRect, textRect } of mirrorReads) {
             sk46ApplyHeaderClip(mirrorEl, mirrorRect, entry, 'mirror');
             if (bgEl && textRect) {
                 const bleedL = sk46State.mirrorBgBleedLeftPx;
@@ -4010,9 +4029,9 @@ function sk46AudioVisibleNow() {
 
                 let newTextTop;
                 if (entry.anchorMode === 'bottom') {
-                    newTextTop = mirrorRect.bottom - (entry.origTextTopFromBottom || 0);
+                    newTextTop = mirrorRect.bottom - (entry.origTextTopFromBottom || (entry.origTextH + SK46_MIRROR_CONTAINER_PAD_Y + SK46_MIRROR_TEXT_PAD));
                 } else {
-                    newTextTop = mirrorRect.top + (entry.origTextTopFromTop || 0);
+                    newTextTop = mirrorRect.top + (entry.origTextTopFromTop || SK46_MIRROR_TEXT_PAD);
                 }
 
                 const textEl = mirrorEl.firstElementChild;
@@ -4027,21 +4046,19 @@ function sk46AudioVisibleNow() {
                     }
                 }
 
+                const maxTextW = Math.max(entry.origTextW || 0, textRect.width || 0);
+                const maxTextH = Math.max(entry.origTextH || 0, textRect.height || 0);
                 const bgLeft = textRect.left - bleedL;
                 const bgTop  = newTextTop - bleedT;
-                const bgW = (entry.origTextW > 0)
-                    ? entry.origTextW + bleedL + bleedR
-                    : textRect.width + bleedL + bleedR;
-                const bgH = (entry.origTextH > 0)
-                    ? entry.origTextH + bleedT + bleedB
-                    : textRect.height + bleedT + bleedB;
+                const bgW = maxTextW + bleedL + bleedR;
+                const bgH = maxTextH + bleedT + bleedB;
 
                 bgEl.style.display = '';
                 bgEl.style.left = bgLeft + 'px';
                 bgEl.style.top = bgTop + 'px';
                 bgEl.style.width = bgW + 'px';
                 bgEl.style.height = bgH + 'px';
-                sk46ApplyHeaderClip(bgEl, { left: bgLeft, top: bgTop, width: bgW, height: bgH }, entry, 'bg');
+                sk46ApplyHeaderClip(bgEl, { left: bgLeft, top: bgTop, bottom: bgTop + bgH, width: bgW, height: bgH }, entry, 'bg');
             }
         }
     }
@@ -5328,6 +5345,7 @@ function sk46AudioVisibleNow() {
     function sk46DecodeLineBreaks(text) {
         let s = String(text || '').replace(/\s*\r?\n\s*/g, ' ');
         s = s.replace(/\s*<\s*NL\s*>\s*/gi, '\n');
+        s = s.replace(/\n{3,}/g, '\n\n');
         return s;
     }
 
@@ -5438,15 +5456,6 @@ function sk46AudioVisibleNow() {
         if (sender) {
             parts.push(`Current message sender: ${sender} (${groupLabel} member)`);
             parts.push(`Self-reference rule: The sender frequently refers to herself in the third person using her own name or nickname (e.g. "${sender}は..."). In ${targetLanguage}, translate such self-references using first-person pronouns ("I", "me", "aku", etc.) rather than third-person.`);
-        }
-
-        const groupRoster = SK46_GROUP_MEMBERS && SK46_GROUP && SK46_GROUP_MEMBERS[SK46_GROUP.id];
-        if (groupRoster && groupRoster.length > 0) {
-            parts.push('');
-            parts.push(`MEMBER NAMES & NICKNAMES RULE:`);
-            parts.push(`- Names and nicknames of ${groupLabel} members are personal proper nouns. NEVER translate them as literal dictionary words (e.g. 天/Ten as sky/heaven, まつり/Matsuri as festival, ひかり/Hikari as light, おすし/Osushi as sushi).`);
-            parts.push(`- Keep them in recognized Romaji or standard nicknames.`);
-            parts.push(`- Reference roster for ${groupLabel}: ${groupRoster.join(', ')}.`);
         }
 
         const joinedSources = sources.join('\n');
@@ -5638,13 +5647,30 @@ function sk46AudioVisibleNow() {
         const cleaned = String(raw || '').replace(/```[a-z]*\s*/gi, '').replace(/```\s*/g, '').trim();
         const rawLines = cleaned.split('\n');
         const byId = new Map();
+        let currentId = null;
         for (const line of rawLines) {
             const m = line.match(/^\s*\[(\d+)\]\s*(.*)$/);
-            if (!m) continue;
-            const id = parseInt(m[1], 10);
-            if (id < 1 || id > n) continue;
-            if (byId.has(id)) continue;
-            byId.set(id, m[2].trim());
+            if (m) {
+                const id = parseInt(m[1], 10);
+                if (id >= 1 && id <= n) {
+                    currentId = id;
+                    const content = m[2].trim();
+                    if (!byId.has(id)) {
+                        byId.set(id, content);
+                    } else {
+                        const prev = byId.get(id);
+                        byId.set(id, prev ? prev + ' <NL> ' + content : content);
+                    }
+                    continue;
+                }
+            }
+            if (currentId != null) {
+                const trimmed = line.trim();
+                if (trimmed) {
+                    const prev = byId.get(currentId) || '';
+                    byId.set(currentId, prev ? prev + ' <NL> ' + trimmed : trimmed);
+                }
+            }
         }
         if (byId.size < Math.min(2, n)) {
             const nonEmpty = rawLines
@@ -6725,7 +6751,7 @@ function sk46AudioVisibleNow() {
         for (const h2 of host.querySelectorAll('h2')) {
             const h2Rect = h2.getBoundingClientRect();
             if (h2Rect.height === 0 || h2Rect.height > 60) continue;
-            if (h2Rect.width < 80) continue;
+            if (h2Rect.width < 20) continue;
             if (h2Rect.top < -20) continue;
             if (h2Rect.top > h2TopLimit) continue;
 
@@ -6929,8 +6955,8 @@ function sk46AudioVisibleNow() {
         const defaults = {
             preview: true, textTopPadPx: 14, pictureCaptionBiasPx: -8,
             mirrorRightPadExtraPx: 5,
-            mirrorBgBleedTopPx: 10, mirrorBgBleedRightPx: 30,
-            mirrorBgBleedBottomPx: 10, mirrorBgBleedLeftPx: 24.5,
+            mirrorBgBleedTopPx: 10, mirrorBgBleedRightPx: 16,
+            mirrorBgBleedBottomPx: 20, mirrorBgBleedLeftPx: 16,
             skipUnreadButtons: true, maskFloatingButtons: true,
             showTranslateBtn: true, translateEnabled: false,
             language: 'English', provider: 'gemini',
