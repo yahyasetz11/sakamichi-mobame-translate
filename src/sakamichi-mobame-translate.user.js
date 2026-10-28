@@ -58,14 +58,12 @@
     });
     const SK46_GROUP_MEMBERS = Object.freeze({
         sakura: [
-            // 1st Gen
-            '小池美波 (Koike Minami)',
             // 2nd Gen
             '井上梨名 (Inoue Rina / Inori)', '遠藤光莉 (Endo Hikari / Hikari)', '大園玲 (Ozono Rei / Rei, Zono)',
             '大沼晶保 (Onuma Akiho / Numa, Akipo)', '幸阪茉里乃 (Kosaka Marino / Marino)', '武元唯衣 (Takemoto Yui / Chuke)',
             '田村保乃 (Tamura Hono / Honosu, Hono)', '藤吉夏鈴 (Fujiyoshi Karin / Karin)', '増本綺良 (Masumoto Kira / Kirako)',
             '松田里奈 (Matsuda Rina / Matsuda, Matsuri)', '森田ひかる (Morita Hikaru / Run, Run-chan, Hikaru)',
-            '守屋麗奈 (Moriya Rena / Rena, Renana)', '山﨑天 (Yamazaki Ten / Tenchan, Ten)',
+            '守屋麗奈 (Moriya Rena / Rena, Renana)', '山﨑天 (Yamasaki Ten / Tenchan, Ten)',
             // 3rd Gen
             '石森璃花 (Ishimori Rika / Rika)', '遠藤理子 (Endo Riko / Enriko)', '小田倉麗奈 (Odakura Reina / Reina)',
             '小島凪紗 (Kojima Nagisa / Nagi)', '谷口愛季 (Taniguchi Airi / Airi)', '中嶋優月 (Nakashima Yuzuki / Yuzu)',
@@ -75,8 +73,6 @@
             '浅井恋乃未 (Asai Konomi / Konomi)', '稲熊ひな (Inaguma Hina / Hina)', '勝又春 (Katsumata Haru / Haru)',
             '佐藤愛桜 (Sato Neo / Neo)', '中川智尋 (Nakagawa Chihiro / Chiitan)', '松本和子 (Matsumoto Wako / Wakochi)',
             '目黒陽色 (Meguro Hiiro / Hiiro)', '山川宇衣 (Yamakawa Ui / Ui)', '山田桃実 (Yamada Momomi / Momo)',
-            // Notable Grads
-            '菅井友香 (Sugai Yuka)', '渡邉理佐 (Watanabe Risa)', '小林由依 (Kobayashi Yui)', '土生瑞穂 (Habu Mizuho)'
         ],
         nogi: [
             // 3rd Gen
