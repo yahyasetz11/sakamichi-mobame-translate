@@ -66,7 +66,7 @@
 
   // ===================== UTILITIES =====================
   function log(...args) {
-    console.log("[S46]", ...args);
+    console.log(`[${SK46_GROUP.label}]`, ...args);
   }
 
   function showToast(msg, type = "info") {
@@ -122,6 +122,7 @@
   // ===================== STYLES =====================
   GM_addStyle(`
         #s46-panel {
+            --sk46-accent: ${SK46_GROUP.accent};
             position: fixed; bottom: 30px; right: 30px;
             z-index: 999999;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -148,7 +149,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         #s46-header .badge {
-            background: #e74c3c;
+            background: var(--sk46-accent);
             color: white;
             border-radius: 20px;
             padding: 2px 10px;
@@ -224,7 +225,7 @@
         }
 
         .s46-item .dl-btn {
-            background: #e74c3c;
+            background: var(--sk46-accent);
             border: none;
             color: white;
             border-radius: 6px;
@@ -236,7 +237,7 @@
             flex-shrink: 0;
             white-space: nowrap;
         }
-        .s46-item .dl-btn:hover { background: #c0392b; transform: scale(1.05); }
+        .s46-item .dl-btn:hover { filter: brightness(0.9); transform: scale(1.05); }
         .s46-item .dl-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
         .s46-item .dl-btn.success { background: #2ecc71; }
         .s46-item .dl-btn.error { background: #7f8c8d; }
@@ -248,7 +249,7 @@
             padding: 12px 18px; background: rgba(0,0,0,0.85);
             color: white; border-radius: 10px; font-size: 13px;
             z-index: 1000001; animation: s46-fadeIn 0.25s ease;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid var(--sk46-accent);
             max-width: 300px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
@@ -491,7 +492,7 @@
     const header = document.createElement("div");
     header.id = "s46-header";
     header.innerHTML = `
-            <span>📦 Media Queue <span class="badge">0</span></span>
+            <span>📦 ${SK46_GROUP.label} Media <span class="badge">0</span></span>
             <span class="arrow">▾</span>
         `;
     header.addEventListener("click", () => togglePanel());
@@ -511,9 +512,9 @@
   }
 
   // ===================== INIT =====================
-  log("Sakura46 Downloader loaded.");
+  log(`${SK46_GROUP.label} Downloader loaded.`);
   buildPanel();
-  showToast("🟢 Ready! Media will appear in queue.", "success");
+  showToast(`🟢 ${SK46_GROUP.label} Downloader ready! Media will appear in queue.`, "success");
 
   window.addEventListener("flutter-first-frame", () =>
     log("Flutter frame rendered."),
