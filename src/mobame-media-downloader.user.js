@@ -121,8 +121,11 @@
 
   // ===================== STYLES =====================
   GM_addStyle(`
-        #s46-panel {
+        :root, #s46-panel {
             --sk46-accent: ${SK46_GROUP.accent};
+            --sk46-accent-text: ${SK46_GROUP.id === "nogi" ? "#ffffff" : "#1a1a2e"};
+        }
+        #s46-panel {
             position: fixed; bottom: 30px; right: 30px;
             z-index: 999999;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -150,7 +153,7 @@
         }
         #s46-header .badge {
             background: var(--sk46-accent);
-            color: white;
+            color: var(--sk46-accent-text);
             border-radius: 20px;
             padding: 2px 10px;
             font-size: 12px;
@@ -227,7 +230,7 @@
         .s46-item .dl-btn {
             background: var(--sk46-accent);
             border: none;
-            color: white;
+            color: var(--sk46-accent-text);
             border-radius: 6px;
             padding: 5px 12px;
             font-size: 12px;
@@ -238,9 +241,9 @@
             white-space: nowrap;
         }
         .s46-item .dl-btn:hover { filter: brightness(0.9); transform: scale(1.05); }
-        .s46-item .dl-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
-        .s46-item .dl-btn.success { background: #2ecc71; }
-        .s46-item .dl-btn.error { background: #7f8c8d; }
+        .s46-item .dl-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; transform: none; }
+        .s46-item .dl-btn.success { background: #2ecc71; color: white; }
+        .s46-item .dl-btn.error { background: #7f8c8d; color: white; }
 
         .s46-empty { padding: 20px; text-align: center; color: #666; font-size: 13px; }
 
@@ -512,7 +515,7 @@
   }
 
   // ===================== INIT =====================
-  log(`${SK46_GROUP.label} Downloader loaded.`);
+  log("Downloader loaded.");
   buildPanel();
   showToast(`🟢 ${SK46_GROUP.label} Downloader ready! Media will appear in queue.`, "success");
 
