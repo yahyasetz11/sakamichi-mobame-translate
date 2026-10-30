@@ -1144,6 +1144,42 @@ border-radius: 12px;
                 -webkit-tap-highlight-color: transparent;
             }
             .tab.active { background: ${SK46_APP_PINK}; color: #fff; }
+            #popup-copy-btn {
+                all: unset;
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                border-radius: 6px;
+                cursor: pointer;
+                color: #8e8e8e;
+                position: relative;
+                transition: color .15s ease, background .15s ease, opacity .15s ease;
+                -webkit-tap-highlight-color: transparent;
+            }
+            #popup-copy-btn:hover { background: rgba(0,0,0,0.06); color: #1a1a1a; }
+            #popup-copy-btn:active { background: rgba(0,0,0,0.12); }
+            #popup-copy-btn.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+            #popup-copy-btn.copied { color: #2ecc71; }
+            #popup-copy-btn svg { width: 18px; height: 18px; display: block; }
+            #popup-copy-tip {
+                position: absolute;
+                bottom: calc(100% + 6px);
+                right: 0;
+                padding: 4px 8px;
+                border-radius: 6px;
+                background: #1a1a1a;
+                color: #fff;
+                font-size: 11px;
+                white-space: nowrap;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity 0.12s ease, visibility 0.12s ease;
+            }
+            #popup-copy-tip.visible { opacity: 1; visibility: visible; }
             #popup-body { padding: 14px; max-height: 40vh; overflow-y: auto; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; }
             #popup-body.mono { font-family: ${SK46_MIRROR_FONT_FAMILY}; }
 /* Karaoke: teks yang belum terdengar tampil redup. Yang sudah mulai
@@ -1170,6 +1206,10 @@ border-radius: 12px;
             <div id="popup-tabs">
                 <div class="tab active" data-tab="original">Original</div>
                 <div class="tab" data-tab="translated">Translation</div>
+                <button id="popup-copy-btn" type="button" aria-label="Copy" title="Copy">
+                    <span id="popup-copy-icon">${SK46_ICON_COPY}</span>
+                    <span id="popup-copy-tip">Copied!</span>
+                </button>
             </div>
             <div id="popup-body"></div>
             <div id="popup-status"><span id="popup-status-text"></span><span id="popup-retry">Retry</span></div>
@@ -1177,10 +1217,23 @@ border-radius: 12px;
     `;
   const sk46PopupCard = sk46PopupShadow.getElementById("popup-card");
   const sk46PopupBackdrop = sk46PopupShadow.getElementById("popup-backdrop");
+  const sk46PopupCopyBtn = sk46PopupShadow.getElementById("popup-copy-btn");
+  const sk46PopupCopyIcon = sk46PopupShadow.getElementById("popup-copy-icon");
+  const sk46PopupCopyTip = sk46PopupShadow.getElementById("popup-copy-tip");
+  let sk46PopupCopyResetTimer = null;
 
   function sk46HidePopupChrome() {
     sk46PopupCard.classList.remove("visible");
     sk46PopupBackdrop.classList.remove("visible");
+    if (sk46PopupCopyBtn) {
+      sk46PopupCopyBtn.classList.remove("copied");
+      if (sk46PopupCopyIcon) sk46PopupCopyIcon.innerHTML = SK46_ICON_COPY;
+      if (sk46PopupCopyTip) sk46PopupCopyTip.classList.remove("visible");
+    }
+    if (sk46PopupCopyResetTimer) {
+      clearTimeout(sk46PopupCopyResetTimer);
+      sk46PopupCopyResetTimer = null;
+    }
   }
   const sk46PopupBody = sk46PopupShadow.getElementById("popup-body");
   const sk46PopupStatus = sk46PopupShadow.getElementById("popup-status");
@@ -1202,6 +1255,34 @@ border-radius: 12px;
   sk46PopupRetry.addEventListener("click", () => {
     if (sk46PopupEntry) sk46RunTranscription(sk46PopupEntry, true);
   });
+
+  if (sk46PopupCopyBtn) {
+    sk46PopupCopyBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!sk46PopupEntry) return;
+      const targetText =
+        sk46PopupTab === "original"
+          ? (sk46PopupEntry.transcript || (sk46PopupBody ? sk46PopupBody.textContent : "") || "")
+          : (sk46PopupEntry.translated || "");
+      if (!targetText.trim()) return;
+
+      const ok = await sk46CopyToClipboard(targetText.trim());
+      if (ok) {
+        sk46PopupCopyBtn.classList.add("copied");
+        if (sk46PopupCopyIcon) sk46PopupCopyIcon.innerHTML = SK46_ICON_CHECK;
+        if (sk46PopupCopyTip) sk46PopupCopyTip.classList.add("visible");
+        if (sk46PopupCopyResetTimer) clearTimeout(sk46PopupCopyResetTimer);
+        sk46PopupCopyResetTimer = setTimeout(() => {
+          sk46PopupCopyBtn.classList.remove("copied");
+          if (sk46PopupCopyIcon) sk46PopupCopyIcon.innerHTML = SK46_ICON_COPY;
+          if (sk46PopupCopyTip) sk46PopupCopyTip.classList.remove("visible");
+        }, 1500);
+      }
+    });
+    sk46PopupCopyBtn.addEventListener("mousedown", (e) => e.stopPropagation());
+    sk46PopupCopyBtn.addEventListener("pointerdown", (e) => e.stopPropagation());
+  }
 
   function sk46ForwardWheelToFlutter(e) {
     const body = sk46PopupBody;
@@ -3813,6 +3894,20 @@ border-radius: 12px;
     } else {
       sk46PopupStatus.classList.remove("visible");
     }
+    if (sk46PopupCopyBtn) {
+      const hasContent =
+        sk46PopupTab === "original"
+          ? !!(entry && entry.transcript && entry.transcript.trim())
+          : !!(entry && entry.translated && entry.translated.trim());
+      sk46PopupCopyBtn.classList.toggle("disabled", !hasContent);
+      sk46PopupCopyBtn.setAttribute("aria-disabled", String(!hasContent));
+      sk46PopupCopyBtn.title = !hasContent
+        ? "No content to copy"
+        : sk46PopupTab === "original"
+          ? "Copy transcription"
+          : "Copy translation";
+      sk46PopupCopyBtn.setAttribute("aria-label", sk46PopupCopyBtn.title);
+    }
     sk46PositionPopup(entry);
   }
 
@@ -5152,13 +5247,9 @@ border-radius: 12px;
         sk46UpdateRefreshBtnSpinning(entry);
 
         if (entry.copyEl) {
-          const text = entry.node && entry.node.text;
-          const key = text ? sk46TranslationCacheKey(text) : null;
+          const key = entry.translationKey || (entry.node && entry.node.text ? (entry.translationKey = sk46TranslationCacheKey(entry.node.text)) : null);
           const cached = key ? sk46TranslationCache.get(key) : null;
-          const hasTranslation =
-            cached &&
-            (cached.status === "ok" || cached.status === "done") &&
-            !!cached.translated;
+          const hasTranslation = cached && cached.status === "ok" && !!cached.translated;
           const copyVisible = visible && hasTranslation;
           sk46UpdateCopyBtnPosition(entry, r, copyVisible);
         }
