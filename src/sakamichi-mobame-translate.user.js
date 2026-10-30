@@ -755,6 +755,7 @@
   let sk46RefreshBtnSizePx = 24;
   let sk46RefreshBtnOffsetXPx = 68;
   let sk46RefreshBtnOffsetYPx = -32;
+  const sk46CopyBtnGapPx = 4;
 
   let sk46SenderColorRetryTimer = null;
   let sk46SenderColorRetryCount = 0;
@@ -943,19 +944,21 @@
         return true;
       }
     } catch (e) {}
+    let ta = null;
     try {
-      const ta = document.createElement("textarea");
+      ta = document.createElement("textarea");
       ta.value = text;
+      ta.readOnly = true;
       ta.style.cssText =
         "position:fixed;opacity:0;top:0;left:0;pointer-events:none;z-index:-1;";
       document.body.appendChild(ta);
       ta.focus();
       ta.select();
-      const ok = document.execCommand("copy");
-      ta.remove();
-      return !!ok;
+      return !!document.execCommand("copy");
     } catch {
       return false;
+    } finally {
+      if (ta && ta.remove) ta.remove();
     }
   }
 
@@ -1085,6 +1088,28 @@
             visibility: visible;
         }
         .sk46-transcript-btn { color: var(--sk46-sender-color, #888); }
+        .sk46-copy-btn {
+            position: fixed;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0; margin: 0; border: none; background: transparent;
+            color: var(--sk46-sender-color, #888);
+            cursor: pointer;
+            pointer-events: auto;
+            overflow: visible;
+            -webkit-tap-highlight-color: transparent;
+            opacity: 0.85;
+            transition: opacity 0.15s ease, color 0.15s ease;
+        }
+        .sk46-copy-btn:hover { opacity: 1; }
+        .sk46-copy-btn:active { opacity: 0.5; }
+        .sk46-copy-btn svg { width: 100%; height: 100%; display: block; }
+        .sk46-copy-btn.copied { color: #2ecc71; }
+        .sk46-copy-btn:hover .sk46-refresh-tip:not(:empty),
+        .sk46-copy-btn:focus .sk46-refresh-tip:not(:empty),
+        .sk46-copy-btn.copied .sk46-refresh-tip:not(:empty) {
+            opacity: 1;
+            visibility: visible;
+        }
     `;
 
   const sk46PopupHost = document.createElement("div");
@@ -4332,6 +4357,80 @@ border-radius: 12px;
     if (btn.style.display !== "flex") btn.style.display = "flex";
   }
 
+  function sk46BuildCopyBtn(entry) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "sk46-copy-btn";
+    btn.setAttribute("aria-label", "Copy translation");
+    btn.innerHTML = SK46_ICON_COPY;
+    const tip = document.createElement("span");
+    tip.className = "sk46-refresh-tip";
+    tip.setAttribute("aria-hidden", "true");
+    tip.textContent = "Copy translation";
+    btn.appendChild(tip);
+    btn._sk46Tip = tip;
+    btn._sk46ErrorTip = tip;
+    btn._sk46ResetTimer = null;
+
+    btn.addEventListener("mouseenter", () => sk46PlaceRefreshErrorTip(btn));
+    btn.addEventListener("focus", () => sk46PlaceRefreshErrorTip(btn));
+    btn.style.width = sk46RefreshBtnSizePx + "px";
+    btn.style.height = sk46RefreshBtnSizePx + "px";
+    btn.style.display = "none";
+
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const text = entry && entry.node && entry.node.text;
+      if (!text) return;
+      const key = sk46TranslationCacheKey(text);
+      const cached = sk46TranslationCache.get(key);
+      const translated =
+        cached && (cached.status === "ok" || cached.status === "done")
+          ? cached.translated
+          : (cached && cached.translated) || "";
+      if (!translated) return;
+
+      const ok = await sk46CopyToClipboard(translated);
+      if (ok) {
+        btn.classList.add("copied");
+        btn.innerHTML = SK46_ICON_CHECK;
+        tip.textContent = "Copied!";
+        btn.appendChild(tip);
+        sk46PlaceRefreshErrorTip(btn);
+        if (btn._sk46ResetTimer) clearTimeout(btn._sk46ResetTimer);
+        btn._sk46ResetTimer = setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.innerHTML = SK46_ICON_COPY;
+          tip.textContent = "Copy translation";
+          btn.appendChild(tip);
+        }, 1500);
+      }
+    });
+
+    btn.addEventListener("mousedown", (e) => e.stopPropagation());
+    btn.addEventListener("pointerdown", (e) => e.stopPropagation());
+    btn.addEventListener("contextmenu", (e) => e.stopPropagation());
+    return btn;
+  }
+
+  function sk46UpdateCopyBtnPosition(entry, rect, visible) {
+    const btn = entry.copyEl;
+    if (!btn) return;
+    if (!visible) {
+      if (btn.style.display !== "none") btn.style.display = "none";
+      return;
+    }
+    const sz = sk46RefreshBtnSizePx;
+    const left = rect.right - (sz * 2) - sk46RefreshBtnOffsetXPx - sk46CopyBtnGapPx;
+    const top = rect.top + sk46RefreshBtnOffsetYPx;
+    btn.style.left = left + "px";
+    btn.style.top = top + "px";
+    btn.style.width = sz + "px";
+    btn.style.height = sz + "px";
+    if (btn.style.display !== "flex") btn.style.display = "flex";
+  }
+
   function sk46UpdateRefreshBtnSpinning(entry) {
     const btn = entry.refreshEl;
     if (!btn) return;
@@ -4371,12 +4470,14 @@ border-radius: 12px;
   }
 
   function sk46PlaceRefreshErrorTip(btn) {
-    const tip = btn && btn._sk46ErrorTip;
+    const tip = btn && (btn._sk46Tip || btn._sk46ErrorTip);
+    const isCopyBtn = btn && btn.classList.contains("sk46-copy-btn");
+    const isErrorBtn = btn && btn.classList.contains("error");
     if (
       !tip ||
       !tip.textContent ||
       !btn.isConnected ||
-      !btn.classList.contains("error")
+      (!isCopyBtn && !isErrorBtn)
     )
       return;
     const rect = btn.getBoundingClientRect();
@@ -4689,6 +4790,7 @@ border-radius: 12px;
             bgEl: null,
             bgKind: null,
             refreshEl: null,
+            copyEl: null,
             translationKey: null,
             isRefreshing: false,
             dbgId,
@@ -4846,6 +4948,7 @@ border-radius: 12px;
           bgEl,
           bgKind,
           refreshEl: null,
+          copyEl: null,
           translationKey,
           isRefreshing: false,
           dbgId,
@@ -4863,6 +4966,10 @@ border-radius: 12px;
           entry.refreshEl = refreshEl;
           sk46RefreshLayer.appendChild(refreshEl);
           sk46UpdateRefreshBtnError(entry);
+
+          const copyEl = sk46BuildCopyBtn(entry);
+          entry.copyEl = copyEl;
+          sk46RefreshLayer.appendChild(copyEl);
         }
 
         sk46TextEntries.push(entry);
@@ -4980,6 +5087,8 @@ border-radius: 12px;
         if (e.bgEl && e.bgEl.parentNode) e.bgEl.parentNode.removeChild(e.bgEl);
         if (e.refreshEl && e.refreshEl.parentNode)
           e.refreshEl.parentNode.removeChild(e.refreshEl);
+        if (e.copyEl && e.copyEl.parentNode)
+          e.copyEl.parentNode.removeChild(e.copyEl);
         sk46DebugSeam.dropState(e.dbgId);
         sk46TextEntries.splice(i, 1);
         purged++;
@@ -5041,6 +5150,20 @@ border-radius: 12px;
           !overlapsBottom;
         sk46UpdateRefreshBtnPosition(entry, r, visible);
         sk46UpdateRefreshBtnSpinning(entry);
+
+        if (entry.copyEl) {
+          const text = entry.node && entry.node.text;
+          const key = text ? sk46TranslationCacheKey(text) : null;
+          const cached = key ? sk46TranslationCache.get(key) : null;
+          const hasTranslation =
+            cached &&
+            (cached.status === "ok" || cached.status === "done") &&
+            !!cached.translated;
+          const copyVisible = visible && hasTranslation;
+          sk46UpdateCopyBtnPosition(entry, r, copyVisible);
+        }
+      } else if (entry.copyEl) {
+        sk46UpdateCopyBtnPosition(entry, r, false);
       }
     }
 
