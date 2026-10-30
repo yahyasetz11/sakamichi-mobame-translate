@@ -1166,7 +1166,7 @@ border-radius: 12px;
             #popup-copy-btn svg { width: 18px; height: 18px; display: block; }
             #popup-copy-tip {
                 position: absolute;
-                bottom: calc(100% + 6px);
+                top: calc(100% + 6px);
                 right: 0;
                 padding: 4px 8px;
                 border-radius: 6px;
@@ -1177,6 +1177,8 @@ border-radius: 12px;
                 opacity: 0;
                 visibility: hidden;
                 pointer-events: none;
+                z-index: 10;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
                 transition: opacity 0.12s ease, visibility 0.12s ease;
             }
             #popup-copy-tip.visible { opacity: 1; visibility: visible; }
@@ -5249,7 +5251,7 @@ border-radius: 12px;
         if (entry.copyEl) {
           const key = entry.translationKey || (entry.node && entry.node.text ? (entry.translationKey = sk46TranslationCacheKey(entry.node.text)) : null);
           const cached = key ? sk46TranslationCache.get(key) : null;
-          const hasTranslation = cached && cached.status === "ok" && !!cached.translated;
+          const hasTranslation = !!(cached && (cached.status === "ok" || cached.status === "done") && cached.translated);
           const copyVisible = visible && hasTranslation;
           sk46UpdateCopyBtnPosition(entry, r, copyVisible);
         }

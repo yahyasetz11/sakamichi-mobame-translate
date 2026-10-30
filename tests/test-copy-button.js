@@ -16,5 +16,7 @@ assert.ok(content.includes("popup-copy-btn"), "Should define popup-copy-btn in p
 console.log("--- 2. Testing Positioning & Logic ---");
 assert.ok(content.includes("sk46CopyBtnGapPx"), "Should define sk46CopyBtnGapPx");
 assert.ok(content.includes("sk46UpdateCopyBtnPosition"), "Should define sk46UpdateCopyBtnPosition");
+assert.ok(content.includes('cached.status === "done"'), "Should accept done status in cache checks");
+assert.ok(content.includes("top: calc(100% + 6px)"), "Popup copy tip should position downwards to avoid overflow clipping");
 
 console.log("All copy button static checks passed!");
