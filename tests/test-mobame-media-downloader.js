@@ -25,8 +25,6 @@ function runInMockEnv(hostname, isIframe = false) {
   let xmlHttpRequests = [];
 
   const mockWindow = {
-    top: isIframe ? {} : null,
-    self: isIframe ? { diff: true } : null,
     location: { hostname },
     PerformanceObserver: function (cb) {
       this.observe = () => {};
@@ -48,6 +46,7 @@ function runInMockEnv(hostname, isIframe = false) {
         setAttribute: () => {},
         appendChild: () => {},
         append: () => {},
+        remove: () => {},
         addEventListener: () => {},
         dataset: {},
       };
@@ -59,6 +58,7 @@ function runInMockEnv(hostname, isIframe = false) {
     window: mockWindow,
     document: mockDoc,
     location: mockWindow.location,
+    PerformanceObserver: mockWindow.PerformanceObserver,
     console: {
       log: (...args) => loggedMessages.push(args.join(" ")),
     },
