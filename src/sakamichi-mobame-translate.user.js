@@ -928,6 +928,36 @@
 
   const SK46_ICON_REFRESH = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" aria-hidden="true"><path d="M481.54-180q-125.63 0-212.81-87.17-87.19-87.17-87.19-212.77 0-125.6 87.19-212.83Q355.91-780 481.54-780q70.15 0 132.77 31.19 62.61 31.2 104.15 88.04V-780h60v244.61H533.85v-59.99h158q-31.62-57.93-87.7-91.27Q548.08-720 481.54-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h63.23q-27.23 97.92-107.27 158.96Q583.46-180 481.54-180Z"/></svg>`;
   const SK46_ICON_TRANSCRIPT = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" aria-hidden="true"><path d="M670.07-562.31q-28.84 0-49.45-20.12Q600-602.56 600-632.31V-800q0-29.75 20.57-49.87Q641.13-870 670.01-870q29.76 0 49.87 20.13Q740-829.75 740-800v167.69q0 29.75-20.1 49.88-20.11 20.12-49.83 20.12ZM212.31-100q-29.83 0-51.07-21.24Q140-142.48 140-172.31v-615.38q0-29.83 21.24-51.07Q182.48-860 212.31-860H510v60H212.31q-5.39 0-8.85 3.46t-3.46 8.85v615.38q0 5.39 3.46 8.85t8.85 3.46h415.38q5.39 0 8.85-3.46t3.46-8.85v-73.08h60v72.92q0 30.08-21.24 51.28Q657.52-100 627.69-100H212.31ZM290-245.39V-310h260v64.61H290Zm0-120v-59.99h180v59.99H290ZM700-330h-60v-102.46Q564.54-443 512.27-499.08 460-555.15 460-632.31h60q0 59.93 44.46 101.12Q608.92-490 669.97-490q62.11 0 106.07-41.19Q820-572.38 820-632.31h60q0 77.54-51.77 133.43Q776.46-443 700-432.46V-330Z"/></svg>`;
+  const SK46_ICON_COPY = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" aria-hidden="true"><path d="M360-240q-29.7 0-50.85-21.15Q288-282.3 288-312v-480q0-29.7 21.15-50.85Q330.3-864 360-864h384q29.7 0 50.85 21.15Q816-821.7 816-792v480q0-29.7-21.15 50.85Q773.7-240 744-240H360Zm0-72h384v-480H360v480ZM216-96q-29.7 0-50.85-21.15Q144-138.3 144-168v-552h72v552h456v72H216Zm144-216v-480 480Z"/></svg>`;
+  const SK46_ICON_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" aria-hidden="true"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
+
+  async function sk46CopyToClipboard(text) {
+    if (!text) return false;
+    try {
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (e) {}
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.cssText =
+        "position:fixed;opacity:0;top:0;left:0;pointer-events:none;z-index:-1;";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      return !!ok;
+    } catch {
+      return false;
+    }
+  }
 
   const sk46OverlayStyle = document.createElement("style");
   sk46OverlayStyle.textContent = `
