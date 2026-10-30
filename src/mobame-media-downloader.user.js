@@ -51,7 +51,12 @@
   if (!SK46_GROUP) return;
 
   // ===================== CONSTANTS =====================
-  const CLOUDFRONT_DOMAIN = "dmu54xlwnhgck.cloudfront.net";
+  const KNOWN_CDN_DOMAINS = Object.freeze([
+    SK46_GROUP.cdnDomain,
+    "dmu54xlwnhgck.cloudfront.net",
+    "djznowbmqickg.cloudfront.net",
+    "d3ux740zhdvrpf.cloudfront.net",
+  ]);
   const PATH_PATTERN = /\/private\/messages\//;
   const THUMBNAIL_FILTER = /\/thumbnails\//;
   const VIDEO_THUMBNAIL_PATTERN = /\.\d{7}\./;
@@ -263,7 +268,14 @@
       return;
     }
 
-    if (!url.includes(CLOUDFRONT_DOMAIN) || !PATH_PATTERN.test(url)) {
+    if (!PATH_PATTERN.test(url)) {
+      return;
+    }
+
+    const matchesCdn =
+      KNOWN_CDN_DOMAINS.some((domain) => url.includes(domain)) ||
+      /\.cloudfront\.net\//.test(url);
+    if (!matchesCdn) {
       return;
     }
 
@@ -423,6 +435,11 @@
           method: "GET",
           url: url,
           responseType: "blob",
+          headers: {
+            Referer: `${SK46_GROUP.origin}/`,
+            Origin: SK46_GROUP.origin,
+            Accept: "*/*",
+          },
           onload: (res) => {
             if (res.status === 200) {
               const blob = URL.createObjectURL(res.response);
